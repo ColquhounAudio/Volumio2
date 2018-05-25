@@ -60,7 +60,7 @@ function settime {
 
 function checktime {
   YEAR=$(date +%Y)
-  if [ "$TIME"== "1970" ]; then
+  if [ "$TIME" == "1970" ]; then
     TIME="false"
     echo "Time was not set properly"
 else
@@ -74,7 +74,7 @@ function testsound {
 if [[ "$RTC" == "true" && "$APC" == "true" && "$TIME" == "true" ]]; then
       echo "All tests passed"
 
-      /usr/bin/play /volumio/axiom/qc/passed.wav
+      /usr/bin/aplay /volumio/axiom/qc/passed.wav
 
 
 	/bin/systemctl disable qcheck.service
@@ -84,9 +84,9 @@ if [[ "$RTC" == "true" && "$APC" == "true" && "$TIME" == "true" ]]; then
 else
     echo "Quality Check Failed"
 
-     /usr/bin/play /volumio/axiom/qc/failed.wav
-     /usr/bin/play /volumio/axiom/qc/failed.wav
-     /usr/bin/play /volumio/axiom/qc/failed.wav
+     /usr/bin/aplay /volumio/axiom/qc/failed.wav
+     /usr/bin/aplay /volumio/axiom/qc/failed.wav
+     /usr/bin/aplay /volumio/axiom/qc/failed.wav
     sleep 10
 fi
 }
