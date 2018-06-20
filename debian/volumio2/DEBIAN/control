@@ -1,0 +1,10 @@
+Package: volumio2
+Version: 2.389-axiom-1.1
+Architecture: all
+Maintainer: unknown <ggiraudon@prism19.com>
+Installed-Size: 8627
+Section: unknown
+Priority: optional
+Homepage: <insert the upstream URL, if relevant>
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>

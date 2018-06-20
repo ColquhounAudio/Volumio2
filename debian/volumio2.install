@@ -1,0 +1,14 @@
+./debian/tree/volumio volumio
+./app volumio/
+./crashreport.js volumio/
+./http volumio/
+./index.js volumio/
+./LICENSE.md volumio/
+./logsubmit.js volumio/
+./package.json volumio/
+./pluginhelper.js volumio/
+./README.md volumio/
+./test volumio/
+./utils volumio/
+./wsclient.js volumio/
+

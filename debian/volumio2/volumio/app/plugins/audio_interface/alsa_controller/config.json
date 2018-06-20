@@ -1,0 +1,14 @@
+{
+  "volumestart":{
+    "type": "string",
+    "value": "disabled"
+  },
+  "volumemax":{
+    "type": "string",
+    "value": "100"
+  },
+  "volumecurvemode":{
+    "type": "string",
+    "value": "logarithmic"
+  }
+}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="./assets/clipboard.min.js"></script>
+		<title><%= title %></title>
+		<style>
+			#div-console {
+				border: 1px solid black;
+				height: 400px;
+				overflow-y: scroll;
+			}
+			#div-console ul {
+				list-style-type: none;
+				padding: 0px;
+				margin: 0px;
+			}
+			#div-console ul li pre {
+				padding: 0px;
+				margin: 0px;
+			}
+			#div-browser li, #div-playqueue li {
+				clear: both;
+			}
+			.button-itemaction {
+				float: right;
+			}
+		</style>
+	</head>
+	<body>
+		<h3>Player State</h3>
+
+		<br />
+		<div id='playerstate'></div>
+		<br />
+
+		<h3>Test Mode</h3>
+		<button id='button-testtrue' class='control-websocket' disabled>TRUE</button>
+		<button id='button-testfalse' class='control-websocket' disabled>FALSE</button>
+
+		<h3>SSH</h3>
+		<button id='button-sshenable' class='control-websocket' disabled>ENABLE</button>
+		<button id='button-sshdisable' class='control-websocket' disabled>DISABLE</button>
+
+		<h3>Send Log or bug report</h3>
+		<span id="log-message"></span>
+		<form class="bug-form">
+			<input id="bug-form-description" type="text" placeholder="Describe what you were doing/why you are sending the report." style="border: 1px solid black; width: 600px;"/>
+			<button id="bug-form-button" type="bug-form-submit">Send</button>
+			<button class="btn" id="copy-button" type="button" data-clipboard-demo data-clipboard-target="#bug-form-description" style="display:none">
+				Copy to clipboard
+			</button>
+		</form>
+
+		<h3>Play Queue</h3>
+		<ol id='div-playqueue' start='0'></ol>
+
+		<script src="./assets/socket.io-2.0.3.js"></script>
+		<script src="./dev.js"></script>
+
+	</body>
+</html>

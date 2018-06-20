@@ -1,0 +1,12 @@
+volumio2 (2.389-axiom-1.1) UNRELEASED; urgency=medium
+
+  * Non-maintainer upload.
+  * 
+
+ --  <ggiraudon@Harley>  Wed, 20 Jun 2018 17:20:14 -0400
+
+volumio2 (2.389-axiom-1) unstable; urgency=medium
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- unknown <ggiraudon@prism19.com>  Wed, 20 Jun 2018 17:08:10 -0400
