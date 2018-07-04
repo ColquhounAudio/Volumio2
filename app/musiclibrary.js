@@ -308,7 +308,12 @@ CoreMusicLibrary.prototype.executeBrowseSource = function(curUri) {
     var response;
 	//console.log('--------------------------'+curUri)
 	if (curUri != undefined) {
-        if (curUri.startsWith('favourites')) {
+	if(curUri === "optical/input1"){
+		self.commandRouter.logger.info('THIS IS WHERE HANDLEBROWSE IS CALLED');
+		self.commandRouter.executeOnPlugin('music_service', 'optical', 'switchOn');
+	}
+	
+	else if (curUri.startsWith('favourites')) {
             return self.commandRouter.playListManager.listFavourites(curUri);
         }
         else if (curUri.startsWith('search')) {
@@ -334,7 +339,9 @@ CoreMusicLibrary.prototype.executeBrowseSource = function(curUri) {
             promise.resolve({});
             return promise.promise;
         }
-	} else {
+	}
+
+	 else {
         var promise=libQ.defer();
         promise.resolve({});
         return promise.promise;

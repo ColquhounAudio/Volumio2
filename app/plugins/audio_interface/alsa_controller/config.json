@@ -10,5 +10,19 @@
   "volumecurvemode":{
     "type": "string",
     "value": "logarithmic"
+  },
+  "volumesteps":{
+    "type": "string",
+    "value": "5"
+  },
+  "outputdevice":{
+    "type": "string",
+    "value": "volume"
+  },
+  "mixer":{
+    "type": "string",
+    "value": "Digital Playback Volume"
   }
+
+
 }

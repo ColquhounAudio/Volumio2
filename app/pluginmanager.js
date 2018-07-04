@@ -1,5 +1,7 @@
 'use strict';
 
+// 20180530 RMPickering - Removed population of available plugins list.
+
 var fs = require('fs-extra');
 var HashMap = require('hashmap');
 var libFast = require('fast.js');
@@ -1409,7 +1411,7 @@ PluginManager.prototype.getAvailablePlugins = function () {
 	var myplugins = [];
 	var response=[];
 
-	var url = 'http://plugins.volumio.org/plugins/'+variant+'/'+arch+'/plugins.json';
+//	var url = 'http://plugins.volumio.org/plugins/'+variant+'/'+arch+'/plugins.json';
 	var installed = self.getInstalledPlugins();
 
 	if (installed != undefined) {
@@ -1421,45 +1423,47 @@ PluginManager.prototype.getAvailablePlugins = function () {
 		});
 	}
 
-	http.get(url, function(res){
-		var body = '';
-		if (res.statusCode > 300 && res.statusCode < 400 && res.headers.location) {
-			//self.logger.info("Following Redirect to: " + res.headers.location);
-			http.get(res.headers.location, function(res){
-				res.on('data', function(chunk){
-					body += chunk;
-				});
+//	http.get(url, function(res){
+//		var body = '';
+//		if (res.statusCode > 300 && res.statusCode < 400 && res.headers.location) {
+//			//self.logger.info("Following Redirect to: " + res.headers.location);
+//			http.get(res.headers.location, function(res){
+//				res.on('data', function(chunk){
+//					body += chunk;
+//				});
 
-				res.on('end', function(){
+//				res.on('end', function(){
 
-					try {
-						var response = JSON.parse(body);
-						pushAvailablePlugins(response);
-					} catch (e) {
-						self.logger.info("Error Parsing Plugins JSON");
-					}
-				});
-			}).on('error', function(e){
-				self.logger.info("Cannot download Available plugins list: "+e);
-			});
-		} else
-		{
-			res.on('data', function (chunk) {
-				body += chunk;
-			});
+//					try {
+//						var response = JSON.parse(body);
+//						pushAvailablePlugins(response);
+//					} catch (e) {
+//						self.logger.info("Error Parsing Plugins JSON");
+//					}
+//				});
+//			}).on('error', function(e){
+//				self.logger.info("Cannot download Available plugins list: "+e);
+//			});
+//		} else
+//		{
+//			res.on('data', function (chunk) {
+//				body += chunk;
+//			});
 
-			res.on('end', function () {
-				try {
-					var response = JSON.parse(body);
-					pushAvailablePlugins(response);
-				} catch (e) {
-					self.logger.info("Error Parsing Plugins JSON");
-				}
-			});
-		}
-	}).on('error', function(e){
-		self.logger.info("Cannot download Available plugins list: "+e);
-	});
+//			res.on('end', function () {
+//				try {
+//					var response = JSON.parse(body);
+//					pushAvailablePlugins(response);
+//				} catch (e) {
+//					self.logger.info("Error Parsing Plugins JSON");
+//				}
+//			});
+//		}
+//	}).on('error', function(e){
+//		self.logger.info("Cannot download Available plugins list: "+e);
+
+		self.logger.info("Installation of additional plugins is disabled; available list not populated.");
+//	});
 
 	function pushAvailablePlugins(response) {
 		for(var i = 0; i < response.categories.length; i++) {
@@ -1467,7 +1471,7 @@ PluginManager.prototype.getAvailablePlugins = function () {
 			for(var a = 0; a <  plugins.length; a++) {
 				var availableName = plugins[a].prettyName;
 				var availableVersion = plugins[a].version;
-                var availableCategory = plugins[a].category;
+              var availableCategory = plugins[a].category;
                 var thisPlugin =  plugins[a];
                 thisPlugin.installed = false;
 				for(var c = 0; c <  myplugins.length; c++) {

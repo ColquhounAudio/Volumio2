@@ -20,6 +20,7 @@
         "value": "STARTED"
       }
     },
+
     "webradio": {
       "enabled": {
         "type": "boolean",

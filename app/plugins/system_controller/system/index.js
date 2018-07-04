@@ -9,6 +9,12 @@ var spawn = require('child_process').spawn;
 var crypto = require('crypto');
 var calltrials = 0;
 
+// 20180517 RMPickering - Adding code to show network status (WiFi Connected or HotSpot mode) on AxiomAir LEDs.
+//var Gpio = require('onoff').Gpio;
+
+// GPIO pin of the WiFi LED - set it up in output mode!
+//var led = new Gpio(26, 'out');
+
 // Define the ControllerSystem class
 module.exports = ControllerSystem;
 
@@ -46,6 +52,9 @@ ControllerSystem.prototype.onVolumioStart = function () {
 
 	self.deviceDetect();
 	self.callHome();
+
+        // 20180517 RMPickering - Let's turn on the WiFi LED!
+        //led.writeSync(1);
 
     return libQ.resolve();
 };

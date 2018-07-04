@@ -22,7 +22,16 @@ function InterfaceWebUI(context) {
 
 	/** On Client Connection, listen for various types of clients requests */
 	self.libSocketIO.on('connection', function (connWebSocket) {
+		
 
+		// 06/08/2018: Afrodita Kujumdzieva - Added sockets call 'switchOffExtInput' which calls a gpio-button function to switch off the external source playing
+		// This function is called by the modal in the function next() in the file /data/plugins/system_controller/gpio-buttons/index.js 
+		connWebSocket.on('switchOffExtInput', function() {
+			self.commandRouter.pushConsoleMessage('SOCKET CALL: switchOffExtInput');
+			self.commandRouter.executeOnPlugin('system_controller', 'gpio-buttons', 'switchOffExtInput');
+
+		});
+		
             connWebSocket.on('getDeviceInfo', function () {
                 var uuid=self.commandRouter.sharedVars.get('system.uuid');
                 var name=self.commandRouter.sharedVars.get('system.name');
@@ -34,7 +43,6 @@ function InterfaceWebUI(context) {
                 connWebSocket.emit('pushDeviceInfo', data);
 
             });
-
 			connWebSocket.on('getState', function () {
 				var selfConnWebSocket = this;
 

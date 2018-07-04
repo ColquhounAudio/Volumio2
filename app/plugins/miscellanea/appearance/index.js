@@ -1,5 +1,7 @@
 'use strict';
 
+// 20180528 RMPickering - change hardcoding of program title from "Volumio" to "AxiomAir"
+
 var fs=require('fs-extra');
 var config= new (require('v-conf'))();
 var libQ = require('kew');
@@ -161,7 +163,9 @@ volumioAppearance.prototype.getUiSettings = function()
     var language = config.get('language_code');
     var theme = config.get('theme');
     var background_type = config.get('background_type');
-    var metatitle = config.get('metatitle', 'Volumio - Audiophile Music Player');
+
+    // 20180528 RMPickering - change hardcoding of program title from "Volumio" to "AxiomAir"
+    var metatitle = config.get('metatitle', 'AxiomAir - Digital Music Player');
 
     if (background_type === 'background') {
         var background_title = config.get('background_title');

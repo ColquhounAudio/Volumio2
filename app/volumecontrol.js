@@ -9,7 +9,7 @@ Volume.mute = null;
 
 
 var device = '';
-var mixer = '';
+var mixer = 'SoftMaster';
 var maxvolume = '';
 var volumecurve = '';
 var volumesteps = '';

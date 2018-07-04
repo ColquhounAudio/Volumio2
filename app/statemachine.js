@@ -256,7 +256,7 @@ CoreStateMachine.prototype.clearQueue = function () {
 // Volumio Stop Command
 /*CoreStateMachine.prototype.stop = function (promisedResponse) {
 	this.commandRouter.pushConsoleMessage('CoreStateMachine::stop');
-
+	
 	if (this.currentStatus === 'play') {
 		// Play -> Stop transition
 		this.currentStatus = 'stop';
@@ -510,6 +510,14 @@ CoreStateMachine.prototype.pushState = function () {
 	var state = this.getState();
 
 	var self = this;
+
+	// 06/07/2018: Afrodita Kujumdzieva - added an if statement to check if state.service is optical and if so do not check favourites.
+	
+//	this.commandRouter.pushConsoleMessage('CoreStateMachine:: pushState - STATE.SERVICE - ' + state.service);
+//	if (state.service === 'optical'){
+//		self.commandRouter.volumioPushState(state);
+//	} 
+//else{
 	self.commandRouter.volumioPushState(state)
 		.then(function (data) {
 			self.checkFavourites(state)
@@ -517,7 +525,7 @@ CoreStateMachine.prototype.pushState = function () {
 					promise.resolve({});
 				})
 		});
-
+//	}
 	return promise.promise;
 };
 
@@ -582,22 +590,29 @@ CoreStateMachine.prototype.syncState = function (stateService, sService) {
      *
      *
      *
+     *
      */
+	
+	/** 06/07/2018: Afrodita Kujumdzieva - Commented out return statements to allow the new service that is causing an interruption to be processed even though it is not expected
+	 * and changed "Skipping notification." to "Processing service interruption."
+         */
+	// 20180607 RMPickering - Unfortunately the above change seems to be causing unanticipated problems and didn't solve the one I hoped it would solve. I'm putting it back to original state. There is something funny going on though.
 	if(this.consumeUpdateService){
 		if(this.consumeUpdateService!=sService)
 		{
-			this.commandRouter.pushConsoleMessage('CONSUME SERVICE: Received update from a service different from the one supposed to be playing music. Skipping notification. Current '+this.consumeUpdateService+" Received "+sService);
+			this.commandRouter.pushConsoleMessage('CONSUME SERVICE: Received update from a service different from the one supposed to be playing music. Processing service interruption. Current '+this.consumeUpdateService+" Received "+sService);
 			if (this.consumeUpdateService == 'upnp') {
         this.consumeUpdateService = 'mpd';
         sService = 'mpd';
-			} else {
-        return;
+			} 
+			else {
+        			return;
 			}
 		}
 	} else {
 		if(trackBlock!=undefined && trackBlock.service!==sService)
 		{
-			this.commandRouter.pushConsoleMessage('Received update from a service different from the one supposed to be playing music. Skipping notification.Current '+trackBlock.service+" Received "+sService);
+			this.commandRouter.pushConsoleMessage('Received update from a service different from the one supposed to be playing music. Processing service interruption. Current '+trackBlock.service+" Received "+sService);
 			return;
 		}
 	}
@@ -623,11 +638,17 @@ CoreStateMachine.prototype.syncState = function (stateService, sService) {
 
 	if (stateService.status === 'play') {
 		if (this.currentStatus === 'play') {
-			this.commandRouter.pushConsoleMessage('Received an update from plaugin. extracting info from payload');
+			this.commandRouter.pushConsoleMessage('Received an update from plugin. extracting info from payload');
 
 			// Checking if system is in consume mode. If it is the status shall be stored
 			if(this.isConsume && stateService)
       {
+
+
+	// 06/07/2018: Afrodita Kujumdzieva - added console message for debugging
+	this.commandRouter.pushConsoleMessage('IS CONSUME IS TRUE');	
+
+
         var consumeAlbum=stateService.album;
         var consumeArtist=stateService.artist;
         var consumeAlbumArt='/albumart';
@@ -662,7 +683,8 @@ CoreStateMachine.prototype.syncState = function (stateService, sService) {
 						stream:stateService.isStreaming
 					};
 				} else {
-
+					
+						
 					this.consumeState={
 						status:stateService.status,
 						title:stateService.title,

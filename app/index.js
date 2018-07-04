@@ -101,6 +101,11 @@ CoreCommandRouter.prototype.volumioPause = function () {
 // Volumio Stop
 CoreCommandRouter.prototype.volumioStop = function () {
 	this.pushConsoleMessage('CoreCommandRouter::volumioStop');
+	
+	// 06/07/2018: Afrodita Kujumdzieva - added the following console message to check what service is being stopped
+	var state = this.stateMachine.getState();
+	this.pushConsoleMessage('VOLUMIOSTOP: service stopped - ' + state.service);
+
 	return this.stateMachine.stop();
 };
 
@@ -292,6 +297,12 @@ CoreCommandRouter.prototype.volumioSearch = function (data) {
 CoreCommandRouter.prototype.volumioPushState = function (state) {
 	this.pushConsoleMessage('CoreCommandRouter::volumioPushState');
 	this.executeOnPlugin('system_controller', 'volumiodiscovery', 'saveDeviceInfo', state);
+	
+	//06/07/2018: Afrodita Kujumdzieva - printing state in the logger to check which state is being pushed
+	
+	this.logger.info('VOLUMIO PUSHED THIS STATE: status - ' + state.status + ", service - " + state.service);	
+	
+
 	// Announce new player state to each client interface
 	var self = this;
 	var res = libQ.all(
