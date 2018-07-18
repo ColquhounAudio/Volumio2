@@ -19,6 +19,7 @@ var premutevolume = '';
 var mixertype = '';
 var devicename = '';
 var volumescript = {'enabled':false, 'setvolumescript':'', 'getvolumescript':''};
+var targetvolume = '';
 
 module.exports = CoreVolumeController;
 function CoreVolumeController(commandRouter) {
@@ -59,7 +60,6 @@ function CoreVolumeController(commandRouter) {
 
 
 	var amixer = function (args, cb) {
-
 		var ret = '';
 		var err = null;
 		var p = spawn('amixer', args);
@@ -317,7 +317,8 @@ CoreVolumeController.prototype.alsavolume = function (VolumeInteger) {
 					if (vol == null) {
 						vol =  currentvolume;
 					}
-					VolumeInteger = Number(vol)+Number(volumesteps);
+
+					VolumeInteger = 2 * Math.round((Number(currentvolume)+Number(volumesteps))/2);
 					if (VolumeInteger > 100){
 						VolumeInteger = 100;
 					}
@@ -330,7 +331,7 @@ CoreVolumeController.prototype.alsavolume = function (VolumeInteger) {
 					self.setVolume(VolumeInteger, function (err) {
 						Volume.vol = VolumeInteger
 						Volume.mute = false;
-                        currentvolume = VolumeInteger;
+ 			                        currentvolume = VolumeInteger;
 						self.logger.info('VolumeController::Volume ' + vol);
                         defer.resolve(Volume)
 
