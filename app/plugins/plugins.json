@@ -30,6 +30,57 @@
 		"value": "STARTED"
 	  }
 	},
+	"spop": {
+		"enabled": {
+			"type": "boolean",
+			"value": true
+		},
+		"status": {
+			"type": "string",
+			"value": "STARTED"
+		}
+	},
+	"tunein_radio": {
+		"enabled": {
+			"type": "boolean",
+			"value": true
+		},
+		"status": {
+			"type": "string",
+			"value": "STARTED"
+		}
+	},
+	"personal_radio": {
+		"enabled": {
+			"type": "boolean",
+			"value": true
+		},
+		"status": {
+			"type": "string",
+			"value": "STARTED"
+		}
+	},
+	"youtube": {
+		"enabled": {
+			"type": "boolean",
+			"value": true
+		},
+		"status": {
+			"type": "string",
+			"value": "STARTED"
+		}
+	},
+	"volspotconnect2": {
+		"enabled": {
+			"type": "boolean",
+			"value": true
+		},
+		"status": {
+			"type": "string",
+			"value": "STARTED"
+		}
+	},
+
 
     "webradio": {
       "enabled": {
