@@ -5,7 +5,7 @@ music_directory		"/var/lib/mpd/music"
 playlist_directory		"/var/lib/mpd/playlists"
 db_file			"/var/lib/mpd/tag_cache"
 #log_file			"/var/log/mpd/mpd.log"
-#pid_file			"/var/run/mpd/pid"
+pid_file			"/var/run/mpd/pid"
 #state_file			"/var/lib/mpd/state"
 #sticker_file                   "/var/lib/mpd/sticker.sql"
 ###############################################################################
@@ -36,31 +36,12 @@ input {
 }
 ###############################################################################
 
-# Decoder ################################################################
-
-"${ffmpeg}"
-
-"${sacdiso}"
-
-###############################################################################
-
-# Audio Output ################################################################
-
-${sox}
-
+	# Audio Output ################################################################
 audio_output {
 		type		"alsa"
 		name		"alsa"
-		device		"${device}"
-		dop			"${dop}"
-		${mixer}
-		${format}
-
+		device		"volume"
 }
-
-
-
-
 
 audio_output {
     type            "fifo"
@@ -68,8 +49,11 @@ audio_output {
     name            "multiroom"
     path            "/tmp/snapfifo"
     format          "44100:16:2"
+    mixer_type      "software"
 }
 
+
+samplerate_converter "soxr very high"
 #replaygain			"album"
 #replaygain_preamp		"0"
 volume_normalization		"${volume_normalization}"
@@ -84,9 +68,9 @@ buffer_before_play		"${buffer_before_play}"
 # Resource Limitations ########################################################
 #connection_timeout		"60"
 max_connections			"20"
-max_playlist_length		"32384"
-max_command_list_size		"8192"
-max_output_buffer_size		"16384"
+#max_playlist_length		"16384"
+#max_command_list_size		"2048"
+#max_output_buffer_size		"8192"
 ###############################################################################
 
 # Character Encoding ##########################################################

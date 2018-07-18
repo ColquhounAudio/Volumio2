@@ -1,0 +1,33 @@
+{
+  "TIDAL":{
+    "CONFIG_SECTION_TITLE":"Configurazione TIDAL",
+    "SECTION_ACCOUNT":"Account TIDAL",
+    "SECTION_QUALITY":"Qualità audio",
+    "SAVE":"Salva",
+    "LOGIN":"Accedi",
+    "LOGOUT":"Disconnetti",
+    "USERNAME":"Username",
+    "PASSWORD":"Password",
+    "QUALITY_DROPDOWN_TITLE":"Qualità",
+    "USE_HIGHEST_QUALITY":"Usa la più alta possibile",
+    "QUALITY_NORMAL":"Normale",
+    "QUALITY_HIGH":"Alta",
+    "QUALITY_LOSSLESS":"Lossless",
+    "SAVE_ACCOUNT_SUCCESS":"Credenziali dell'account memorizzate con successo",
+    "SAVE_QUALITY_SUCCESS":"Impostazioni sulla qualità audio memorizzate con successo",
+    "LOGGING_IN":"Accedo a TIDAL",
+    "LOGGING_OUT":"Disconnessione da TIDAL",
+    "LOGIN_FAIL":"Impossibile connettersi a TIDAL",
+    "LOGIN_NOT_CONFIGURED":"Le credenziali di TIDAL non sono state impostate nella configurazione!",
+    "LOGIN_SUCCESS":"Accesso a TIDAL avvenuto con successo",
+    "LOGOUT_FAIL":"Impossibile disconnettersi da TIDAL",
+    "LOGOUT_SUCCESS":"Disconnesso da TIDAL",
+    "LISTING_NO_RESULTS":"Nessun risultato",
+    "EXPLODE_PLAYLIST_WAIT":"Carico la playlist, attendere prego",
+    "EXPLODE_ALBUM_WAIT":"Carico le informazioni dell'album, attendere prego",
+    "SEARCH_ARTIST":"Artista TIDAL",
+    "SEARCH_ALBUMS":"Album TIDAL",
+    "SEARCH_PLAYLIST":"Playlist TIDAL",
+    "SEARCH_TRACKS":"Tracce TIDAL"
+  }
+}

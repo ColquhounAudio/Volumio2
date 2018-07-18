@@ -20,6 +20,16 @@
         "value": "STARTED"
       }
     },
+	"tidal": {
+	  "enabled": {
+		"type": "boolean",
+		"value": true
+	  },
+	  "status": {
+		"type": "string",
+		"value": "STARTED"
+	  }
+	},
 
     "webradio": {
       "enabled": {

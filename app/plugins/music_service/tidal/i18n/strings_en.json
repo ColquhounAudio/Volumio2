@@ -1,0 +1,33 @@
+{
+  "TIDAL":{
+    "CONFIG_SECTION_TITLE":"TIDAL configuration",
+    "SECTION_ACCOUNT":"TIDAL Account",
+    "SECTION_QUALITY":"TIDAL Audio quality",
+    "SAVE":"Save",
+    "LOGIN":"Login",
+    "LOGOUT":"Logout",
+    "USERNAME":"Username",
+    "PASSWORD":"Password",
+    "QUALITY_DROPDOWN_TITLE":"Quality",
+    "USE_HIGHEST_QUALITY":"Use highest quality possible",
+    "QUALITY_NORMAL":"Normal",
+    "QUALITY_HIGH":"High",
+    "QUALITY_LOSSLESS":"Lossless",
+    "SAVE_ACCOUNT_SUCCESS":"Account credentials saved successfully",
+    "SAVE_QUALITY_SUCCESS":"Quality settings saved successfully",
+    "LOGGING_IN":"Logging into TIDAL",
+    "LOGGING_OUT":"Logging out from TIDAL",
+    "LOGIN_FAIL":"Failed to login into TIDAL",
+    "LOGIN_NOT_CONFIGURED":"TIDAL credential not set in configuration!",
+    "LOGIN_SUCCESS":"Successfully logged in into TIDAL",
+    "LOGOUT_FAIL":"Failed to log out from TIDAL",
+    "LOGOUT_SUCCESS":"Successfully logged out from TIDAL",
+    "LISTING_NO_RESULTS":"No results",
+    "EXPLODE_PLAYLIST_WAIT":"Loading playlist data, please wait",
+    "EXPLODE_ALBUM_WAIT":"Loading album data, please wait",
+    "SEARCH_ARTIST":"TIDAL Artists",
+    "SEARCH_ALBUMS":"TIDAL Albums",
+    "SEARCH_PLAYLIST":"TIDAL playlists",
+    "SEARCH_TRACKS":"TIDAL Tracks"
+  }
+}

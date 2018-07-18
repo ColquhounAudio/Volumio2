@@ -1,0 +1,9 @@
+{
+  "token": "TfsUHH7dBLBmWufs",
+  "login_url":"https://api.tidal.com/v1/login/username",
+  "subscription_url": "https://api.tidal.com/v1/users/USERID/subscription",
+  "stream_url":"http://api.tidal.com/v1/tracks/ID/streamurl",
+  "track_url":"https://api.tidal.com/v1/tracks/ID",
+  "search_url":"https://api.tidal.com/v1/search",
+  "logout_url":"https://api.tidal.com/v1/logout"
+}

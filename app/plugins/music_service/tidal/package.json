@@ -1,0 +1,22 @@
+{
+  "name": "tidal",
+  "version": "1.0.0",
+  "description": "TIDAL plugin",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "fs-extra": "^0.28.0",
+    "kew": "^0.7.0",
+    "moment": "^2.15.1",
+    "unirest": "^0.5.1",
+    "v-conf": "^0.10.0"
+  },
+  "author": "Volumio",
+  "license": "ISC",
+  "volumio_info": {
+    "plugin_type": "music_service",
+    "boot_priority": 100
+  }
+}

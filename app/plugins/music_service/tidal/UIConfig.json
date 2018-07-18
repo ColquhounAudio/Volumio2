@@ -1,0 +1,90 @@
+{
+  "page": {
+    "label": "TRANSLATE.TIDAL.CONFIG_SECTION_TITLE"
+  },
+  "sections": [
+    {
+      "id": "section_account",
+      "element": "section",
+      "label": "TRANSLATE.TIDAL.SECTION_ACCOUNT",
+      "icon": "fa-sort",
+      "onSave": {"type":"controller", "endpoint":"music_service/tidal", "method":"saveAccount"},
+      "saveButton": {
+        "label": "TRANSLATE.TIDAL.LOGIN",
+        "data": [
+          "username",
+          "password"
+        ]
+      },
+      "content": [
+        {
+          "id": "username",
+          "type":"text",
+          "element": "input",
+          "doc": "This is the username of your Tidal account",
+          "label": "TRANSLATE.TIDAL.USERNAME",
+          "value": ""
+        },
+        {
+          "id": "password",
+          "type":"password",
+          "element": "input",
+          "doc": "This is the password of your Tidal account",
+          "label": "TRANSLATE.TIDAL.PASSWORD",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "section_quality",
+      "element": "section",
+      "label": "TRANSLATE.TIDAL.SECTION_QUALITY",
+      "icon": "fa-volume-up",
+      "onSave": {"type":"controller", "endpoint":"music_service/tidal", "method":"saveQuality"},
+      "saveButton": {
+        "label": "TRANSLATE.TIDAL.SAVE",
+        "data": [
+          "useHighestQuality",
+          "userQuality"
+        ]
+      },
+      "content": [
+        {
+          "id": "useHighestQuality",
+          "element": "switch",
+          "doc" : "TRANSLATE.TIDAL.USE_HIGHEST_QUALITY",
+          "label": "TRANSLATE.TIDAL.USE_HIGHEST_QUALITY",
+          "value": true
+        },
+        {
+          "id": "userQuality",
+          "element": "select",
+          "doc": "TRANSLATE.TIDAL.QUALITY_DROPDOWN_TITLE",
+          "label": "TRANSLATE.TIDAL.QUALITY_DROPDOWN_TITLE",
+          "value":  {
+            "value":"NORMAL",
+            "label": "TRANSLATE.TIDAL.QUALITY_NORMAL"
+          },
+          "options": [
+              {
+              "value":"NORMAL",
+              "label": "TRANSLATE.TIDAL.QUALITY_NORMAL"
+              },
+              {
+              "value":"HIGH",
+              "label": "TRANSLATE.TIDAL.QUALITY_HIGH"
+              },
+              {
+              "value":"LOSSLESS",
+              "label": "TRANSLATE.TIDAL.QUALITY_LOSSLESS"
+              }
+          ],
+          "visibleIf": {
+            "field": "useHighestQuality",
+            "value": false
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "token":{
+    "type": "string",
+    "value": "TfsUHH7dBLBmWufs"
+  },
+  "login_url":{
+    "type": "string",
+    "value": "https://api.tidal.com/v1/login/username"
+  },
+  "subscription_url":{
+    "type": "string",
+    "value": "https://api.tidal.com/v1/users/USERID/subscription"
+  },
+  "stream_url":{
+    "type": "string",
+    "value": "http://api.tidal.com/v1/tracks/ID/streamurl"
+  },
+  "track_url":{
+      "type":"string",
+      "value":"https://api.tidal.com/v1/tracks/ID"
+  },
+  "search_url":{
+    "type":"string",
+    "value":"https://api.tidal.com/v1/search"
+  },
+  "logout_url":{
+    "type":"string",
+    "value":"https://api.tidal.com/v1/logout"
+  },
+ "username":{
+    "type": "string",
+    "value": ""
+  },
+  "password":{
+    "type": "string",
+    "value": ""
+  },
+  "useHighestQuality":{
+    "type": "boolean",
+    "value": true
+  },
+  "userQuality":{
+    "type": "string",
+    "value": "NORMAL"
+  }
+}
+
+
