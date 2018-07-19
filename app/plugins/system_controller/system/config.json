@@ -1,6 +1,6 @@
 {
   "playerName": {
-    "value": "AxiomAir",
+    "value": "Volumio",
     "type": "string"
   },
   "startupSound": {
@@ -16,11 +16,15 @@
     "type": "string"
   },
   "device": {
-    "value": "",
+    "value": "Raspberry PI",
     "type": "string"
   },
   "show_wizard": {
-    "value": true,
+    "value": false,
     "type": "boolean"
+  },
+  "uuid": {
+    "type": "string",
+    "value": "a8394904-334f-427b-a1ed-acc7186c41f0"
   }
 }

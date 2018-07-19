@@ -1,8 +1,96 @@
 {
-  "dhcp":{"value":true,"type":"boolean"},
-  "ethip":{"value":"127.0.0.1","type":"string"},
-  "ethnetmask":{"value":"255.255.255.0","type":"string"},
-  "ethgateway":{"value":"0.0.0.0","type":"string"},
-  "wlanssid":{"value":"","type":"string"},
-  "wlanpass":{"value":"","type":"string"}
+  "dhcp": {
+    "value": true,
+    "type": "boolean"
+  },
+  "ethip": {
+    "value": "127.0.0.1",
+    "type": "string"
+  },
+  "ethnetmask": {
+    "value": "255.255.255.0",
+    "type": "string"
+  },
+  "ethgateway": {
+    "value": "0.0.0.0",
+    "type": "string"
+  },
+  "enable_hotspot": {
+    "type": "boolean",
+    "value": true
+  },
+  "hotspot_name": {
+    "type": "string",
+    "value": "AxiomAir"
+  },
+  "hotspot_protection": {
+    "type": "boolean",
+    "value": false
+  },
+  "hotspot_password": {
+    "type": "string",
+    "value": ""
+  },
+  "hotspot_channel": {
+    "type": "string",
+    "value": "4"
+  },
+  "wirelessNetworksSSID": {
+    "type": "array",
+    "value": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "intntw"
+      },
+      {
+        "type": "string",
+        "value": "ZTE MF288991D-2.4G"
+      }
+    ]
+  },
+  "wirelessNetworksPASSWD": {
+    "type": "array",
+    "value": [
+      {
+        "type": "string",
+        "value": ""
+      },
+      {
+        "type": "string",
+        "value": "Office123abc"
+      },
+      {
+        "type": "string",
+        "value": "DG5WZZPUJ6"
+      }
+    ]
+  },
+  "wireless_enabled": {
+    "type": "boolean",
+    "value": true
+  },
+  "wirelessdhcp": {
+    "type": "boolean",
+    "value": true
+  },
+  "wirelessip": {
+    "type": "string",
+    "value": "undefined"
+  },
+  "wirelessnetmask": {
+    "type": "string",
+    "value": "255.255.255.0"
+  },
+  "wirelessgateway": {
+    "type": "string",
+    "value": "192.168.1.1"
+  },
+  "hotspot_fallback": {
+    "type": "boolean",
+    "value": false
+  }
 }

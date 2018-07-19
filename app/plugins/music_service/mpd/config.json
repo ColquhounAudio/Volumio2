@@ -1,62 +1,64 @@
 {
-  "gapless_mp3_playback":{
+  "gapless_mp3_playback": {
     "type": "boolean",
     "value": false
   },
-  "volume_normalization":{
+  "volume_normalization": {
     "type": "boolean",
     "value": false
   },
-  "audio_buffer_size":{
+  "audio_buffer_size": {
     "type": "number",
     "value": 8192
   },
-  "buffer_before_play":{
+  "buffer_before_play": {
     "type": "string",
     "value": "10%"
   },
   "dop": {
-	"type": "boolean",
-	"value": false
+    "type": "boolean",
+    "value": false
   },
-  "auto_update":{
+  "auto_update": {
     "type": "boolean",
     "value": true
   },
-  "nHost":{
+  "nHost": {
     "type": "string",
     "value": "localhost"
   },
-  "nPort":{
+  "nPort": {
     "type": "number",
     "value": 6600
   },
-  "collectionStats":
-  {
-    "artists":
-    {
+  "collectionStats": {
+    "artists": {
       "type": "number",
       "value": 0
     },
-    "albums":{
+    "albums": {
       "type": "number",
       "value": 0
     },
-    "songs":
-    {
+    "songs": {
       "type": "number",
       "value": 0
     },
-    "playtime":{
+    "playtime": {
       "type": "string",
       "value": ""
     }
   },
-  "singleBrowse":{
+  "singleBrowse": {
     "type": "boolean",
     "value": false
+  },
+  "dsd_autovolume": {
+    "type": "boolean",
+    "value": false
+  },
+  "persistent_queue": {
+    "type": "boolean",
+    "value": true
   }
-
 }
-
-

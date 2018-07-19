@@ -1,28 +1,42 @@
 {
-  "volumestart":{
+  "volumestart": {
     "type": "string",
-    "value": "disabled"
+    "value": "50"
   },
-  "volumemax":{
+  "volumemax": {
     "type": "string",
     "value": "100"
   },
-  "volumecurvemode":{
+  "volumecurvemode": {
     "type": "string",
     "value": "logarithmic"
   },
-  "volumesteps":{
+  "outputdevice": {
     "type": "string",
-    "value": "5"
+    "value": "0"
   },
-  "outputdevice":{
+  "mixer_type": {
     "type": "string",
-    "value": "volume"
+    "value": "Hardware"
   },
-  "mixer":{
+  "mixer": {
     "type": "string",
-    "value": "Digital Playback Volume"
+    "value": "Digital"
+  },
+  "volumesteps": {
+    "type": "string",
+    "value": "2"
+  },
+  "outputdevicename": {
+    "type": "string",
+    "value": "HiFiBerry DAC Plus"
+  },
+  "mpdvolume": {
+    "type": "boolean",
+    "value": false
+  },
+  "softvolumenumber": {
+    "type": "string",
+    "value": "0"
   }
-
-
 }
