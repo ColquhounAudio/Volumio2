@@ -294,6 +294,17 @@
         "type": "string",
         "value": "STARTED"
       }
+    },
+    "gpio-buttons": {
+      "enabled": {
+        "type": "boolean",
+        "value": true
+      },
+      "status": {
+        "type": "string",
+        "value": "STARTED"
+      }
     }
+ 
   }
 }

@@ -175,7 +175,7 @@ volumioAppearance.prototype.getUiSettings = function()
         var background_color = config.get('background_color');
         var UiSettings = {"color":background_color, "language":language, "theme":theme, "pageTitle":metatitle}
     }
-
+	console.log(UiSettings);
     defer.resolve(UiSettings);
     return defer.promise;
 };
@@ -199,6 +199,7 @@ volumioAppearance.prototype.getBackgrounds = function()
         var background_title = config.get('background_title');
         var background_path = config.get('background_path');
         var backgrounds = {"current":{"name":background_title,"path":background_path},"available":backgroundsArray};
+	    console.log(backgrounds);
         defer.resolve(backgrounds);
 
     });
