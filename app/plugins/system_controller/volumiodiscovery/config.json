@@ -1,7 +1,7 @@
 {
   "service": {
     "type": "string",
-    "value": "Volumio"
+    "value": "AxiomAir"
   },
   "port": {
     "type": "number",
