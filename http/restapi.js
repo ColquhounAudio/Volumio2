@@ -5,6 +5,7 @@ var ip = require('ip');
 var api = express.Router();
 var ifconfig = require('wireless-tools/ifconfig');
 var primaryhost = undefined;
+var os = require('os');
 
 function apiInterface(server, commandRouter) {
 
@@ -43,28 +44,25 @@ api.get('/host', function(req, res) {
 
 	var hostsarray = [];
 	var interfacesarray = ['eth0','wlan0'];
+	var networkInterfaces = os.networkInterfaces( );
 
 	if (primaryhost != undefined ) {
 		return res.json({ host: primaryhost});
 	} else {
-		for (var i in interfacesarray) {
-			ifconfig.status(interfacesarray[i], function (err, status) {
-
-				if (status != undefined && status.ipv4_address != undefined) {
-					hostsarray.push('http://' + status.ipv4_address);
-				}
-
-				if (i === interfacesarray.length) {
-					if (hostsarray.length > 1) {
-						return res.json({host: hostsarray[0], host2: hostsarray[1]});
-					} else {
-						return res.json({host: hostsarray[0]});
-					}
-
-				}
-				i++
-			});
+		for(var i in networkInterfaces)
+		{
+			        if(interfacesarray.indexOf(i) > -1)
+				        {
+					                console.log();
+					                hostsarray.push('http://' + networkInterfaces[i][0].address);
+					        }
 		}
+		if (hostsarray.length > 1) {
+			return res.json({host: hostsarray[0], host2: hostsarray[1]});
+		} else {
+			return res.json({host: hostsarray[0]});
+		}
+
 	}
 });
 
