@@ -1,14 +1,14 @@
 {
   "i2s_enabled": {
     "type": "boolean",
-    "value": true
+    "value": false
   },
   "i2s_dac": {
     "type": "string",
-    "value": "HiFiBerry DAC Plus"
+    "value": ""
   },
   "i2s_id": {
     "type": "string",
-    "value": "hifiberry-dacplus"
+    "value": ""
   }
 }

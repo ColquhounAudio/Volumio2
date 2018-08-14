@@ -10,6 +10,18 @@ var ip = require('ip');
 var pidof = require('pidof');
 var spawn = require('child_process').spawn;
 var execSync = require('child_process').execSync;
+var Gpio = require('onoff').Gpio;
+var runInShell = require('child_process').exec;
+
+
+//20180628-Emre Ozkan defining the pins for leds and externals toggle switch pins 
+var inputSwitchBit0 = new Gpio(5, 'out');
+var inputSwitchBit1 = new Gpio(6, 'out');
+var opticalIndicatorLed = new Gpio(506, 'out');
+var analogIndicatorLed = new Gpio(505, 'out');
+var internalIndicatorLed = new Gpio(504, 'out');
+
+
 // Define the ControllerSystem class
 module.exports = AirplayEmulation;
 
@@ -25,11 +37,13 @@ function AirplayEmulation(context) {
     self.config=new (require('v-conf'))();
 
     self.mpdRunning=true;
-    self.currentVolume=50;
+    self.currentVolume=20;
     self.scheduled=false;
 
     self.playbackTimeRunning=false;
 
+    // 01/06/2018: Afrodita Kujumdzieva -  Set trackType to 'airplay' because it is needed by the volume manager to disable volume controls. 
+    // 20180516- Emre Ozkan disableUiControls code added
     self.obj={
         status: 'play',
         service:'airplay',
@@ -38,12 +52,13 @@ function AirplayEmulation(context) {
         album: '',
         albumart: '/albumart',
         uri: '',
-        trackType: '',
+        trackType: 'airplay',
         seek: 0,
         duration: 0,
         samplerate: '',
         bitdepth: '',
-        channels: 2
+        channels: 2,
+	disableUiControls: true
     };
 }
 
@@ -69,7 +84,7 @@ AirplayEmulation.prototype.onVolumioStart = function() {
 
     var boundMethod=self.onPlayerNameChanged.bind(self);
     self.commandRouter.executeOnPlugin('system_controller','system','registerCallback',boundMethod);
-    return libQ.resolve();
+
     //self.startAirplayd();
 
 }
@@ -248,13 +263,13 @@ AirplayEmulation.prototype.statusCallback=function(){
 			this.commandRouter.stateMachine.setConsumeUpdateService(undefined);
 			try {
                 execSync('/usr/bin/mpc stop', {uid: 1000, gid: 1000})
+		//20180628-Emre Ozkan Modal close command added here.
+		self.commandRouter.executeOnPlugin('system_controller', 'gpio-buttons', 'switchOffExtInput');
+
+
+
             } catch (e) {
-            }
-            try {
-                execSync('/usr/bin/sudo /usr/bin/cpufreq-set -g performance', {uid: 1000, gid: 1000})
-                console.log('Performance Governor Set Successfully')
-            } catch (e) {
-                console.log('Error setting performance Governor')
+
             }
 
             self.logger.info("Airplay daemon has setup and waits for streaming start. Shutting down MPD and setting up alsa");
@@ -288,7 +303,7 @@ AirplayEmulation.prototype.statusCallback=function(){
                 service:"airplay",
                 callback: self.dock.bind(self)
             });
-		self.setAnalogOff();
+		
             self.startPlaybackTimer();
         }
         else if (content.status == 'stopped') {
@@ -306,13 +321,6 @@ AirplayEmulation.prototype.statusCallback=function(){
             self.commandRouter.stateMachine.unSetVolatile();
             self.commandRouter.stateMachine.resetVolumioState().then(
                 self.commandRouter.volumioStop.bind(self.commandRouter));
-            try {
-                execSync('/usr/bin/sudo /usr/bin/cpufreq-set -g ondemand', {uid: 1000, gid: 1000})
-                console.log('Performance Ondemand Set Successfully')
-            } catch (e) {
-                console.log('Error setting Ondemand Governor')
-            }
-
         }
         else {
             self.commandRouter.stateMachine.unSetVolatile();
@@ -555,3 +563,4 @@ AirplayEmulation.prototype.stopPlaybackTimer=function()
 {
     this.playbackTimeRunning=false;
 }
+
