@@ -426,7 +426,7 @@ setTimeout(function() {
    var conf4 = conf3.replace("${outdev}", hwdev);
    var conf5 = conf4.replace("${initvol}", self.config.get("initvol"));
 
-   fs.writeFile("/data/plugins/music_service/volspotconnect2/startconnect.sh", conf5, 'utf8', function(err) {
+   fs.writeFile("/volumio/app/plugins/music_service/volspotconnect2/startconnect.sh", conf5, 'utf8', function(err) {
 
     if (err)
      defer.reject(new Error(err));
