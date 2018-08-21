@@ -846,39 +846,66 @@ function InterfaceWebUI(context) {
 
 
 			//Updater
-			connWebSocket.on('updateCheck', function () {
+		connWebSocket.on('updateCheck', function () {
 
-                self.commandRouter.broadcastMessage('ClientUpdateCheck', 'search-for-upgrade');
+			self.commandRouter.broadcastMessage('ClientUpdateCheck', 'search-for-upgrade');
+			exec("/usr/bin/sudo /usr/local/bin/axiom-updater.sh", {uid: 1000, gid: 1000}, function (error, stdout, stderr) {
+				if (error !== null) {
+//					console.log('Got error ' + error);
+
+				} else {
+//					console.log('No error');
+//					console.log('stdout was : ' + stdout);
+//					console.log('stderr was : ' + stderr);
+					var file = stdout.split('\n');
+					var nLines = file.length;
+					var update ="";
+					var str;
+					for (var l = 0; l < nLines; l++) {
+						if (file[l].match(/UPDATE/i)) {
+							str = file[l].split(':');
+							update = str[1].replace(/\"/gi, "");
+							self.commandRouter.broadcastMessage('updateReady', {version:update,release:update,device:"AxiomAir",updateavailable:true});
+							self.commandRouter.broadcastMessage('updateDone', {message:'Update '+ update + ' has been downloaded and will install upon restart.'});
+						}
+					}
+
+
+
+				}
+
 
 			});
 
-            connWebSocket.on('ClientUpdateReady', function (message) {
-                var selfConnWebSocket = this;
+		});
 
-                var updateMessage = JSON.parse(message)
-				self.logger.info("Update Ready: " + updateMessage);
-                self.commandRouter.broadcastMessage('updateReady', updateMessage);
-            });
+		connWebSocket.on('ClientUpdateReady', function (message) {
+			var selfConnWebSocket = this;
+
+			var updateMessage = JSON.parse(message)
+			self.logger.info("Update Ready: " + updateMessage);
+			self.commandRouter.broadcastMessage('updateReady', updateMessage);
+		});
 
 
-			connWebSocket.on('update', function (data) {
-				var selfConnWebSocket = this;
-				self.logger.info("Update: " + data);
+		connWebSocket.on('update', function (data) {
+			var selfConnWebSocket = this;
+			self.logger.info("Update: " + data);
 
-                self.commandRouter.broadcastMessage('ClientUpdate', {value:"now"});
-                var started = { 'downloadSpeed': '','eta': '5m','progress': 1, 'status': 'Starting Software Update'};
-                selfConnWebSocket.emit('updateProgress', started);
-                self.commandRouter.executeOnPlugin('system_controller', 'updater_comm', 'notifyProgress', '');
-			});
+			self.commandRouter.broadcastMessage('ClientUpdate', {value:"now"});
+			var started = { 'downloadSpeed': '','eta': '5m','progress': 1, 'status': 'Starting Software Update'};
+			selfConnWebSocket.emit('updateProgress', started);
+			self.commandRouter.executeOnPlugin('system_controller', 'updater_comm', 'notifyProgress', '');
+		});
 
-			connWebSocket.on('deleteUserData', function () {
-				var selfConnWebSocket = this;
-				self.logger.info("Command Delete User Data Received");
-				self.commandRouter.executeOnPlugin('system_controller', 'system', 'deleteUserData', '');
+		connWebSocket.on('deleteUserData', function () {
+			var selfConnWebSocket = this;
+			self.logger.info("Command Delete User Data Received");
+			self.commandRouter.executeOnPlugin('system_controller', 'system', 'deleteUserData', '');
 
-			});
+		});
 
-			connWebSocket.on('factoryReset', function () {
+		connWebSocket.on('factoryReset', function () {
 				var selfConnWebSocket = this;
 				self.logger.info("Command Factory Reset Received");
 
