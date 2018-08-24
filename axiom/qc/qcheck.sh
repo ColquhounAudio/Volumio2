@@ -70,15 +70,15 @@ fi
 }
 
 function testsound {
-    /usr/bin/amixer -M set -c 0 "Master" 100%
+    /usr/bin/amixer -M set -c 0 "Digital" 100%
 if [[ "$RTC" == "true" && "$APC" == "true" && "$TIME" == "true" ]]; then
       echo "All tests passed"
 
       /usr/bin/aplay /volumio/axiom/qc/passed.wav
 
 
-	/bin/systemctl disable qcheck.service
-        /bin/systemctl stop qcheck.service
+	/bin/systemctl disable qualitycheck.service
+        /bin/systemctl stop qualitycheck.service
 
 
 else
