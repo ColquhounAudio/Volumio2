@@ -300,7 +300,50 @@ GPIOButtons.prototype.next = function () {
     // Input #2 is selected by setting GPIO6 high and GPIO5 low.
 
 
- if (currentSource === 1) {
+ if (currentSource === 0) {
+	
+
+
+
+	// select source #2 - switching from 1 to 2 requires turning bit0 off and bit1 on!
+        inputSwitchBit0.write(0);
+        inputSwitchBit1.write(1);
+        currentSource = 1;
+        analogIndicatorLed.write(1);
+        opticalIndicatorLed.write(0);
+        internalIndicatorLed.write(0);
+        this.logger.info('GPIO-Buttons: switched from source 1 to 2');
+
+        //06/08/2018: Afrodita Kujumdzieva - play whitenoise in the background
+        // runInShell(" play -n synth whitenoise ");
+
+        // 06/08/2018: Afrodita Kujumdzieva - close all modals that are currently open
+        this.commandRouter.closeModals();
+	
+	
+        // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
+        // 20180615 RMPickering - Updated title of modal to "External Input"
+        var modalDataAnalogue = {
+            title: 'External Input',
+            message: 'Analogue Input is selected.',
+            size: 'lg',
+            buttons: [
+                {
+                    name: 'Cancel',
+                    class: 'btn btn-info',
+                    emit: 'switchOffExtInput',
+                    payload: ''
+                }
+            ]
+        }
+
+
+
+        this.commandRouter.broadcastMessage("openModal", modalDataAnalogue);
+
+
+    } 
+ else if (currentSource === 1) {
         // TODO: We need to stop current player then play whitenoise on the Pi!	
 
 	//20180703-Emre Ozkan resetting the statemachine to disconnect from spotify!
@@ -365,8 +408,10 @@ GPIOButtons.prototype.next = function () {
 
 	opticalIndicatorLed.write(1);
         internalIndicatorLed.write(0);
+        analogIndicatorLed.write(0);
         // select source #1
         inputSwitchBit0.write(1);
+        inputSwitchBit1.write(0);
         currentSource = 2;
 
 	
@@ -393,44 +438,9 @@ GPIOButtons.prototype.next = function () {
         }
 
 	this.commandRouter.broadcastMessage("openModal", modalDataOptical);
-	
-    } 
- else if (currentSource === 0) {
-	// select source #2 - switching from 1 to 2 requires turning bit0 off and bit1 on!
-        inputSwitchBit0.write(0);
-        inputSwitchBit1.write(1);
-        currentSource = 1;
-        analogIndicatorLed.write(1);
-        opticalIndicatorLed.write(0);
-        this.logger.info('GPIO-Buttons: switched from source 1 to 2');
-
-        //06/08/2018: Afrodita Kujumdzieva - play whitenoise in the background
-        // runInShell(" play -n synth whitenoise ");
-
-        // 06/08/2018: Afrodita Kujumdzieva - close all modals that are currently open
-        this.commandRouter.closeModals();
-	
-	
-        // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
-        // 20180615 RMPickering - Updated title of modal to "External Input"
-        var modalDataAnalogue = {
-            title: 'External Input',
-            message: 'Analogue Input is selected.',
-            size: 'lg',
-            buttons: [
-                {
-                    name: 'Cancel',
-                    class: 'btn btn-info',
-                    emit: 'switchOffExtInput',
-                    payload: ''
-                }
-            ]
-        }
 
 
-
-        this.commandRouter.broadcastMessage("openModal", modalDataAnalogue);
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
