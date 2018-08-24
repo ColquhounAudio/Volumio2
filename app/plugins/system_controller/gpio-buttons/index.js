@@ -300,7 +300,7 @@ GPIOButtons.prototype.next = function () {
     // Input #2 is selected by setting GPIO6 high and GPIO5 low.
 
 
- if (currentSource === 0) {
+ if (currentSource === 1) {
         // TODO: We need to stop current player then play whitenoise on the Pi!	
 
 	//20180703-Emre Ozkan resetting the statemachine to disconnect from spotify!
@@ -367,7 +367,7 @@ GPIOButtons.prototype.next = function () {
         internalIndicatorLed.write(0);
         // select source #1
         inputSwitchBit0.write(1);
-        currentSource = 1;
+        currentSource = 2;
 
 	
 	
@@ -395,11 +395,11 @@ GPIOButtons.prototype.next = function () {
 	this.commandRouter.broadcastMessage("openModal", modalDataOptical);
 	
     } 
- else if (currentSource === 1) {
+ else if (currentSource === 0) {
 	// select source #2 - switching from 1 to 2 requires turning bit0 off and bit1 on!
         inputSwitchBit0.write(0);
         inputSwitchBit1.write(1);
-        currentSource = 2;
+        currentSource = 1;
         analogIndicatorLed.write(1);
         opticalIndicatorLed.write(0);
         this.logger.info('GPIO-Buttons: switched from source 1 to 2');
