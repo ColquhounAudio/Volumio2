@@ -946,7 +946,7 @@ ControllerMpd.prototype.createMPDFile = function (callback) {
 
 			var mixerdev = '';
 			var mixerstrings = '';
-			if (outdev != 'softvolume' ) {
+			if (outdev != 'volume' ) {
                 if (outdev.indexOf(',') >= 0) {
                     mixerdev = 'hw:'+outdev;
                     outdev = 'hw:'+outdev;

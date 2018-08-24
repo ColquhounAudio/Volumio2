@@ -32,9 +32,9 @@ function CoreVolumeController(commandRouter) {
 
 
 	device = this.commandRouter.executeOnPlugin('audio_interface', 'alsa_controller', 'getConfigParam', 'outputdevice');
-	if (device === 'softvolume') {
-		device = this.commandRouter.executeOnPlugin('audio_interface', 'alsa_controller', 'getConfigParam', 'softvolumenumber');
-		devicename = 'softvolume';
+	if (device === 'volume') {
+		device = '0'
+		devicename = 'volume';
 	} else {
         if (device.indexOf(',') >= 0) {
             device = device.charAt(0);
@@ -188,7 +188,7 @@ function CoreVolumeController(commandRouter) {
                 self.logger.info('Cannot set Volume with script: '+e);
 			}
 		} else {
-            //console.log('amixer -M set -c '+device + ' '+ mixer + ' '+val+'%')
+            console.log('amixer -M set -c '+device + ' '+ mixer + ' '+val+'%')
             if (volumecurve === 'logarithmic') {
                 amixer(['-M', 'set', '-c', device, mixer, val + '%'], function (err) {
                     console.log(err)

@@ -160,9 +160,13 @@ function startFlow() {
                         console.log('STARTING HOTSPOT');
                         apstopped = 1;
                         clearTimeout(lesstimer);
+			console.log('step1');
                         stopAP(function () {
+			console.log('step2');
                             setTimeout(function () {
+				console.log('step3');
                                 startHotspot(function () {
+				console.log('step4');
 
 
                                 });

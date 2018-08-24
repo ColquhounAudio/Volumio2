@@ -1715,8 +1715,8 @@ ControllerSpop.prototype.createSPOPDFile = function () {
 			}
 			var outdev = self.commandRouter.sharedVars.get('alsa.outputdevice');
             var hwdev = 'hw:' + outdev;
-			if (outdev === 'softvolume') {
-                hwdev = 'softvolume';
+			if (outdev === 'volume') {
+                hwdev = 'volume';
 			}
 			var  bitrate = self.config.get('bitrate');
 			var bitratevalue = 'true';

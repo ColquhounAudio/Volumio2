@@ -143,7 +143,18 @@
         "type": "string",
         "value": "STARTED"
       }
+    },
+    "multiroom": {
+      "enabled": {
+        "type": "boolean",
+        "value": true
+      },
+      "status": {
+        "type": "string",
+        "value": "STARTED"
+      }
     }
+
   },
   "miscellanea": {
     "alarm-clock": {

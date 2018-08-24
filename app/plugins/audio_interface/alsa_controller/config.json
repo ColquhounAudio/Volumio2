@@ -1,7 +1,7 @@
 {
   "volumestart":{
     "type": "string",
-    "value": "disabled"
+    "value": "50"
   },
   "volumemax":{
     "type": "string",
@@ -21,8 +21,13 @@
   },
   "mixer":{
     "type": "string",
-    "value": "Digital Playback Volume"
+    "value": "SoftMaster"
+  },
+  "softvolumenumber":{
+    "type": "string",
+    "value": "0"
   }
+
 
 
 }

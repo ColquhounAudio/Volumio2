@@ -417,8 +417,8 @@ setTimeout(function() {
    var outdev = self.commandRouter.sharedVars.get('alsa.outputdevice');
    var devicename = self.commandRouter.sharedVars.get('system.name');
    var hwdev = 'plughw:' + outdev;
-   if (outdev == "softvolume") {
-    hwdev = "softvolume"
+   if (outdev == "volume") {
+    hwdev = "volume"
    }
    var conf1 = data.replace("${shared}", shared);
    var conf2 = conf1.replace("${normalvolume}", normalvolume);

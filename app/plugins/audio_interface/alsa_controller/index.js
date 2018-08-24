@@ -96,7 +96,7 @@ ControllerAlsa.prototype.getUIConfig = function () {
 			value = self.config.get('outputdevice');
 			if (value == undefined){
 				value = 0;
-			} else if (value == 'softvolume') {
+			} else if (value == 'volume') {
 				value = self.config.get('softvolumenumber');
 			}
 			var cardnum = value;
