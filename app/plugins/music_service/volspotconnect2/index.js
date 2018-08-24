@@ -50,6 +50,9 @@ self.createVOLSPOTCONNECTFile()
   .fail(function(e) {
    defer.reject(new Error());
   })
+    var boundMethod=self.onPlayerNameChanged.bind(self);
+    self.commandRouter.executeOnPlugin('system_controller','system','registerCallback',boundMethod);
+
 
  return libQ.resolve();
 }
@@ -61,8 +64,8 @@ ControllerVolspotconnect.prototype.getConfigurationFiles = function() {
 
 ControllerVolspotconnect.prototype.onPlayerNameChanged = function(playerName) {
  var self = this;
-
- self.onRestart();
+ console.log("Recreating spotify startup script");
+ self.rebuildVOLSPOTCONNECTAndRestartDaemon();
 };
 
 

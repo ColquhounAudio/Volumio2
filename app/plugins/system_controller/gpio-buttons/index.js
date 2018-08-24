@@ -303,6 +303,30 @@ GPIOButtons.prototype.next = function () {
  if (currentSource === 0) {
 	
 
+	socket.emit('getState', '');
+    	socket.once('pushState', function (state) {
+
+	 if (state.service == 'spop') {
+	self.playbackTimeRunning=false;
+            self.commandRouter.stateMachine.unSetVolatile();
+            self.commandRouter.stateMachine.resetVolumioState().then(
+                self.commandRouter.volumioStop.bind(self.commandRouter));
+		
+
+	//20180703-Emre Ozkan setting the background noise service depend on service name if it is spop start it in 1 sec otherwise start immediately.
+
+	setTimeout(function(){
+	execSync (" sudo systemctl start background_noise.service" );
+ 	}, 500);
+    		
+	}
+	else {
+		execSync (" sudo systemctl start background_noise.service" );
+
+	}
+	});
+
+
 
 
 	// select source #2 - switching from 1 to 2 requires turning bit0 off and bit1 on!
@@ -362,7 +386,7 @@ GPIOButtons.prototype.next = function () {
 
 	setTimeout(function(){
 	execSync (" sudo systemctl start background_noise.service" );
- 	}, 1000);
+ 	}, 500);
     		
 	}
 	else {

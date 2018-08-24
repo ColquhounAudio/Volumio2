@@ -87,6 +87,7 @@ AirplayEmulation.prototype.onVolumioStart = function() {
 
     //self.startAirplayd();
 
+    return libQ.resolve();
 }
 
 AirplayEmulation.prototype.onPlayerNameChanged=function(playerName) {
