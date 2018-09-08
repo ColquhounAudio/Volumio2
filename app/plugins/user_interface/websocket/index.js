@@ -886,6 +886,15 @@ function InterfaceWebUI(context) {
 			self.logger.info("Update Ready: " + updateMessage);
 			self.commandRouter.broadcastMessage('updateReady', updateMessage);
 		});
+		connWebSocket.on('ClientUpdateProgress', function (message) {
+			var selfConnWebSocket = this;
+
+			var updateMessage = JSON.parse(message)
+			self.logger.info("Update : Progress" + updateMessage);
+
+			self.commandRouter.broadcastMessage('updateProgress', updateMessage);
+		});
+
 
 
 		connWebSocket.on('update', function (data) {
