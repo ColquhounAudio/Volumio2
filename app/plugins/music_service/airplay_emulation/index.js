@@ -94,25 +94,32 @@ AirplayEmulation.prototype.onPlayerNameChanged=function(playerName) {
     var self = this;
 
     self.logger.debug("Saving playerName");
+    exec("/usr/bin/sudo /bin/chmod 777 /etc/airplayd/airplayname", {uid: 1000, gid: 1000}, function (error, stdout, stderr) {
+        if (error !== null) {
+            console.log('Canot set permissions for /etc/hosts: ' + error);
 
-    fs.writeFile('/etc/airplayd/airplayname', playerName, function (err) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            setTimeout(function () {
-                exec('/usr/bin/killall -HUP airplayd', {
-                    uid: 1000,
-                    gid: 1000
-                }, function (error, stdout, stderr) {
-                    if (error !== null) {
-                        console.log(error);
-                    } else {
-                        self.logger.info('Airplay name changed to '+ playerName+' and Daemon Restarted')
-                    }
-                });
-            }, 1000)
-        }
+        } else {
+ 
+	    fs.writeFile('/etc/airplayd/airplayname', playerName, function (err) {
+		if (err) {
+		    console.log(err);
+		}
+		else {
+		    setTimeout(function () {
+			exec('/usr/bin/killall -HUP airplayd', {
+			    uid: 1000,
+			    gid: 1000
+			}, function (error, stdout, stderr) {
+			    if (error !== null) {
+				console.log(error);
+			    } else {
+				self.logger.info('Airplay name changed to '+ playerName+' and Daemon Restarted')
+			    }
+			});
+		    }, 1000)
+		}
+	    });
+	}
     });
     var avahiconf = '<?xml version="1.0" standalone="no"?><service-group><name replace-wildcards="yes">'+ playerName +'</name><service><type>_http._tcp</type><port>80</port></service></service-group>';
     exec("/usr/bin/sudo /bin/chmod 777 /etc/avahi/services/volumio.service", {uid: 1000, gid: 1000}, function (error, stdout, stderr) {
