@@ -21,7 +21,7 @@
   },
   "mixer":{
     "type": "string",
-    "value": "SoftMaster"
+    "value": "Digital"
   },
   "softvolumenumber":{
     "type": "string",
