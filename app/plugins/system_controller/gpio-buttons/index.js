@@ -257,18 +257,18 @@ GPIOButtons.prototype.listener = function (action, err, value) {
 GPIOButtons.prototype.playPause = function () {
     socket.emit('getState', '');
     socket.once('pushState', function (state) {
-        if (state.volatile) {
+    //    if (state.volatile) {
             if (state.mute) {
                 socket.emit('unmute');
             } else {
                 socket.emit('mute');
             }
             // playing non-volatile source that can be paused
-        } else if (state.status == 'play') {
-            socket.emit('pause');
-        } else {
-            socket.emit('play');
-        }
+     //   } else if (state.status == 'play') {
+     //       socket.emit('pause');
+     //   } else {
+     //       socket.emit('play');
+     //   }
     });
 
 };
