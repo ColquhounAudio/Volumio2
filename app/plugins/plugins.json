@@ -306,7 +306,7 @@
         "value": "STARTED"
       }
     },
-    "gpio-buttons": {
+    "gpios": {
       "enabled": {
         "type": "boolean",
         "value": true
