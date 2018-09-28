@@ -129,7 +129,7 @@ ControllerNetworkfs.prototype.getUIConfig = function () {
 						})
 				})
 
-			defer.resolve(uiconf);
+			//defer.resolve(uiconf);
 		})
 		.fail(function()
 		{
