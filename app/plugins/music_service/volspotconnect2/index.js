@@ -140,6 +140,19 @@ ControllerVolspotconnect.prototype.volspotconnectDaemonConnect = function(defer)
   self.logger.SpConDebug('Session is active!');
   self.volumioStop().then( () => {
     self.state.status = 'pause';
+	  // Kill Airplay
+            setTimeout(function () {
+                exec('/usr/bin/killall -HUP airplayd', {
+                    uid: 1000,
+                    gid: 1000
+                }, function (error, stdout, stderr) {
+                    if (error !== null) {
+                        console.log(error);
+                    } else {
+                        self.logger.info('Spotify running. Killing Airplay')
+                    }
+                });
+            }, 100)
     self.ActiveState();
   });
  });

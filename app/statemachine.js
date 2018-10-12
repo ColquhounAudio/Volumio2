@@ -610,7 +610,7 @@ CoreStateMachine.prototype.syncState = function (stateService, sService) {
 			}
 		}
 	} else {
-		if(trackBlock!=undefined && trackBlock.service!==sService)
+		if(trackBlock!=undefined && trackBlock.service!==sService && ( trackBlock.service != "webradio" && sService != "mpd" ))
 		{
 			this.commandRouter.pushConsoleMessage('Received update from a service different from the one supposed to be playing music. Processing service interruption. Current '+trackBlock.service+" Received "+sService);
 			return;
