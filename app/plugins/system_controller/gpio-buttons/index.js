@@ -273,39 +273,23 @@ GPIOButtons.prototype.playPause = function () {
 
 };
 
-//next button
-GPIOButtons.prototype.next = function () {
+GPIOButtons.prototype.setInternal = function(){
 	var self = this;
-    this.logger.info('GPIO-Buttons: initiate source switch');
-
-	//20180629-Emre Ozkan - Pushing the state machine to reset when airplay streaming
-	socket.emit('getState', '');
-    	socket.once('pushState', function (state) {
-	if (state.service == 'airplay')
-	{
-		self.playbackTimeRunning=false;
-            self.commandRouter.stateMachine.unSetVolatile();
-            self.commandRouter.stateMachine.resetVolumioState().then(
-                self.commandRouter.volumioStop.bind(self.commandRouter));
-	}
-	});
-
-	 
-
-    //this.logger.info('GPIO-Buttons: writing to indicator led on pin 506');
-    // RMPickering - Repurpose this button to scroll between the available sources on the DAC. This is meant to be implemented as a repeating ring scrolling from source 0 to 1 to 2 and so on, then starting back at zero again.
-    // The input zero is the Pi itself, and the current DAC version has two other inputs available which are numbered as 1 and 2.
-    // Input #0 is selecting by setting GPIO5 & GPIO6 both low.
-    // Input #1 is selected by setting GPIO5 high and GPIO6 low.
-    // Input #2 is selected by setting GPIO6 high and GPIO5 low.
-
-
- if (currentSource === 0) {
+        // we were already on source #2 so need to start back at source zero (the Pi itself)
+         // switch pin down and update current source
+        //inputSwitchBit1.write(0);
+        //currentSource = 0;
+        this.logger.info('GPIO-Buttons: switched from source 2 back to 0');
+        // internalIndicatorLed.write(1);
+        // 20180615 RMPickering - The switchOffExtInput function is needed anyway, in case the User presses the "Cancel" button in the modal popup, so let's use it here to do everything needed to reset to Pi input!
+        this.switchOffExtInput();
 	
-
+}
+GPIOButtons.prototype.setAnalog = function(){
+	var self = this;
 	socket.emit('getState', '');
+    	execSync(" sudo systemctl stop a2dp-playback.service" );
     	socket.once('pushState', function (state) {
-
 	 if (state.service == 'spop') {
 	self.playbackTimeRunning=false;
             self.commandRouter.stateMachine.unSetVolatile();
@@ -366,13 +350,15 @@ GPIOButtons.prototype.next = function () {
         this.commandRouter.broadcastMessage("openModal", modalDataAnalogue);
 
 
-    } 
- else if (currentSource === 1) {
-        // TODO: We need to stop current player then play whitenoise on the Pi!	
+}
+GPIOButtons.prototype.setOptical = function(){
+	var self = this;
+// TODO: We need to stop current player then play whitenoise on the Pi!	
 
 	//20180703-Emre Ozkan resetting the statemachine to disconnect from spotify!
 	
 	socket.emit('getState', '');
+    	execSync(" sudo systemctl stop a2dp-playback.service" );
     	socket.once('pushState', function (state) {
 
 	 if (state.service == 'spop') {
@@ -467,18 +453,104 @@ GPIOButtons.prototype.next = function () {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+}
+GPIOButtons.prototype.setBluetooth = function(){
+	var self = this;
+	socket.emit('getState', '');
+    	socket.once('pushState', function (state) {
+
+	});
+
+	setTimeout(function(){
+	    execSync(" sudo systemctl stop background_noise.service" );
+ 	}, 500);
+	setTimeout(function(){
+	    execSync(" sudo systemctl start a2dp-playback.service" );
+ 	}, 1000);
+
+	socket.emit('pause');
+        		
+	opticalIndicatorLed.write(1);
+        internalIndicatorLed.write(1);
+        analogIndicatorLed.write(1);
+        // select source #1
+        inputSwitchBit0.write(0);
+        inputSwitchBit1.write(0);
+        currentSource = 3;
+
+	
+	
+	// 06/08/2018: Afrodita Kujumdzieva - close all modals currently opened
+        this.commandRouter.closeModals();
+
+        this.logger.info('GPIO-Buttons: switched from source 0 to 1');
+
+	 // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
+        // 20180615 RMPickering - Updated title of modal to "External Input"
+        var modalDataOptical = {
+            title: 'Bluetooth Input',
+            message: 'Bluetooth Input is selected.',
+            size: 'lg',
+            buttons: [
+                {
+                    name: 'Cancel',
+                    class: 'btn btn-info',
+                    emit: 'switchOffExtInput',
+                    payload: ''
+                }
+            ]
+        }
+
+	this.commandRouter.broadcastMessage("openModal", modalDataOptical);
+
+
+}
+
+
+
+
+//next button
+GPIOButtons.prototype.next = function () {
+	var self = this;
+    this.logger.info('GPIO-Buttons: initiate source switch');
+
+	//20180629-Emre Ozkan - Pushing the state machine to reset when airplay streaming
+	socket.emit('getState', '');
+    	socket.once('pushState', function (state) {
+	if (state.service == 'airplay')
+	{
+		self.playbackTimeRunning=false;
+            self.commandRouter.stateMachine.unSetVolatile();
+            self.commandRouter.stateMachine.resetVolumioState().then(
+                self.commandRouter.volumioStop.bind(self.commandRouter));
+	}
+	});
+
+	 
+
+    //this.logger.info('GPIO-Buttons: writing to indicator led on pin 506');
+    // RMPickering - Repurpose this button to scroll between the available sources on the DAC. This is meant to be implemented as a repeating ring scrolling from source 0 to 1 to 2 and so on, then starting back at zero again.
+    // The input zero is the Pi itself, and the current DAC version has two other inputs available which are numbered as 1 and 2.
+    // Input #0 is selecting by setting GPIO5 & GPIO6 both low.
+    // Input #1 is selected by setting GPIO5 high and GPIO6 low.
+    // Input #2 is selected by setting GPIO6 high and GPIO5 low.
+
+
+ if (currentSource === 0) {
+	this.setAnalog();
 
     } 
+ else if (currentSource === 1) {
+ 	this.setOptical();       
+
+    } 
+ else if (currentSource === 2) {
+ 	this.setBluetooth();       
+
+    } 
+ 
  else {
-        // we were already on source #2 so need to start back at source zero (the Pi itself)
-         // switch pin down and update current source
-        //inputSwitchBit1.write(0);
-        //currentSource = 0;
-        this.logger.info('GPIO-Buttons: switched from source 2 back to 0');
-        // internalIndicatorLed.write(1);
-        // 20180615 RMPickering - The switchOffExtInput function is needed anyway, in case the User presses the "Cancel" button in the modal popup, so let's use it here to do everything needed to reset to Pi input!
-        this.switchOffExtInput();
-	
+	this.setInternal();
 
     }
 };
@@ -537,6 +609,7 @@ GPIOButtons.prototype.switchOffExtInput = function () {
 
 
     //20180628-Emre Ozkan- Background noise service called 
+    execSync(" sudo systemctl stop a2dp-playback.service" );
     execSync(" sudo systemctl stop background_noise.service" );
 
     inputSwitchBit0.write(0);
