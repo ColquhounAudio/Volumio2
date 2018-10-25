@@ -320,7 +320,7 @@ ControllerMpd.prototype.haltIfNewerUpdateRunning = function (data, timeCurrentTh
 ControllerMpd.prototype.pushState = function (state) {
 	var self = this;
 	self.commandRouter.pushConsoleMessage('ControllerMpd::pushState');
-
+	console.log(state);
 	return self.commandRouter.servicePushState(state, self.servicename);
 };
 
