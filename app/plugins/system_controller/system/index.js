@@ -619,6 +619,39 @@ ControllerSystem.prototype.enableSSH = function (data) {
     });
 }
 
+ControllerSystem.prototype.enableAirSupport = function (data) {
+    var self = this;
+
+    var immediate = 'start'
+    if (data == 'false') {
+        immediate = 'stop';
+    }
+
+    exec('/usr/bin/sudo /usr/local/vpnclient/vpnclient '+immediate,{uid:1000,gid:1000}, function (error, stdout, stderr) {
+        if (error !== null) {
+            console.log(error);
+            self.logger.info('Cannot '+immediate+' AirSupport service: ' + error);
+        } else {
+            self.logger.info(immediate+ ' AirSupport service success');
+	    if(immediate == 'start') {
+		    setTimeout(function(){
+			    exec('/usr/bin/sudo /sbin/dhcpcd vpn_vpn',{uid:1000,gid:1000}, function (error, stdout, stderr) {
+				if (error !== null) {
+				    console.log(error);
+				    self.logger.info('Cannot start dhcpclient on vpn link: ' + error);
+				} else {
+				    self.logger.info('DHCP client started on vpn link');
+				}
+			    });
+
+		    }, 3000);
+
+	    }
+        }
+    });
+}
+
+
 ControllerSystem.prototype.checkPassword = function (data) {
 	var self = this;
 	var defer = libQ.defer();

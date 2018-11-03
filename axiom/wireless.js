@@ -183,11 +183,13 @@ function startFlow() {
                         var SSID = execSync("/usr/bin/sudo /sbin/iwgetid -r", { uid: 1000, gid: 1000, encoding: 'utf8'});
                         console.log('Connected to: ----'+SSID+'----');
                     } catch(e) {
-                        //console.log('ERROR: '+e)
+                        console.log('FAILED TO GET SSID INFO');
+                        console.log('ERROR: '+e);
                     }
 
 
                     if (SSID != undefined) {
+                        console.log('WE ARE CONNECTED TO AN AP !');
                         ifconfig.status(wlan, function (err, ifstatus) {
                             console.log("... joined AP, wlan0 IPv4 is " + ifstatus.ipv4_address + ", ipV6 is " + ifstatus.ipv6_address);
                             if (((ifstatus.ipv4_address != undefined) &&
