@@ -561,10 +561,11 @@ ControllerSystem.prototype.deviceCheck = function (data) {
 
 ControllerSystem.prototype.callHome = function () {
 	var self = this;
-
+	var macaddr = "FF:FF:FF:FF:FF:FF";
 
 	try {
-		var macaddr = fs.readFileSync('/sys/class/net/eth0/address', "utf8");
+		macaddr = fs.readFileSync('/sys/class/net/eth0/address', "utf8");
+		macaddr = macaddr.replace('\n','');
 		var anonid = macaddr.toString().replace(':','');
 
 	} catch (e) {
@@ -572,12 +573,13 @@ ControllerSystem.prototype.callHome = function () {
 		var anonid = self.config.get('uuid');
 	}
 	var md5 = crypto.createHash('md5').update(anonid).digest("hex");
+
 	var info = self.getSystemVersion();
 	info.then(function(infos)
 	{
 		if ((infos.variant) && (infos.systemversion) && (infos.hardware) && (md5)) {
 		console.log('Volumio Calling Home');
-		exec('/usr/bin/curl -X POST --data-binary "device='+ infos.hardware + '&variante=' + infos.variant + '&version=' + infos.systemversion + '&uuid=' + md5 +'" http://updates.volumio.org:7070/downloader-v1/track-device',
+		exec('/usr/bin/curl -X POST --data-binary "{ \\"device\\" : \\"'+ infos.hardware + '\\" , \\"variant\\" : \\"' + infos.variant + '\\" , \\"version\\" : \\"' + infos.systemversion + '\\" , \\"uuid\\" : \\"' + anonid +'\\" , \\"mac\\" : \\"' + macaddr + '\\" }" http://airtracker.axiomaudio.com/track.php',
 			function (error, stdout, stderr) {
 
 				if (error !== null) {
