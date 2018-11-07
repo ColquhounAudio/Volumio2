@@ -561,10 +561,11 @@ ControllerSystem.prototype.deviceCheck = function (data) {
 
 ControllerSystem.prototype.callHome = function () {
 	var self = this;
-
+	var macaddr = "FF:FF:FF:FF:FF:FF";
 
 	try {
-		var macaddr = fs.readFileSync('/sys/class/net/eth0/address', "utf8");
+		macaddr = fs.readFileSync('/sys/class/net/eth0/address', "utf8");
+		macaddr = macaddr.replace('\n','');
 		var anonid = macaddr.toString().replace(':','');
 
 	} catch (e) {
@@ -572,12 +573,13 @@ ControllerSystem.prototype.callHome = function () {
 		var anonid = self.config.get('uuid');
 	}
 	var md5 = crypto.createHash('md5').update(anonid).digest("hex");
+
 	var info = self.getSystemVersion();
 	info.then(function(infos)
 	{
 		if ((infos.variant) && (infos.systemversion) && (infos.hardware) && (md5)) {
 		console.log('Volumio Calling Home');
-		exec('/usr/bin/curl -X POST --data-binary "device='+ infos.hardware + '&variante=' + infos.variant + '&version=' + infos.systemversion + '&uuid=' + md5 +'" http://updates.volumio.org:7070/downloader-v1/track-device',
+		exec('/usr/bin/curl -X POST --data-binary "{ \\"device\\" : \\"'+ infos.hardware + '\\" , \\"variant\\" : \\"' + infos.variant + '\\" , \\"version\\" : \\"' + infos.systemversion + '\\" , \\"uuid\\" : \\"' + anonid +'\\" , \\"mac\\" : \\"' + macaddr + '\\" }" http://airtracker.axiomaudio.com/track.php',
 			function (error, stdout, stderr) {
 
 				if (error !== null) {
@@ -618,6 +620,39 @@ ControllerSystem.prototype.enableSSH = function (data) {
         }
     });
 }
+
+ControllerSystem.prototype.enableAirSupport = function (data) {
+    var self = this;
+
+    var immediate = 'start'
+    if (data == 'false') {
+        immediate = 'stop';
+    }
+
+    exec('/usr/bin/sudo /usr/local/vpnclient/vpnclient '+immediate,{uid:1000,gid:1000}, function (error, stdout, stderr) {
+        if (error !== null) {
+            console.log(error);
+            self.logger.info('Cannot '+immediate+' AirSupport service: ' + error);
+        } else {
+            self.logger.info(immediate+ ' AirSupport service success');
+	    if(immediate == 'start') {
+		    setTimeout(function(){
+			    exec('/usr/bin/sudo /sbin/dhcpcd vpn_vpn',{uid:1000,gid:1000}, function (error, stdout, stderr) {
+				if (error !== null) {
+				    console.log(error);
+				    self.logger.info('Cannot start dhcpclient on vpn link: ' + error);
+				} else {
+				    self.logger.info('DHCP client started on vpn link');
+				}
+			    });
+
+		    }, 3000);
+
+	    }
+        }
+    });
+}
+
 
 ControllerSystem.prototype.checkPassword = function (data) {
 	var self = this;

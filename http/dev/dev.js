@@ -12,6 +12,10 @@ document.getElementById('button-testtrue').onclick = function() {socket.emit('ca
 document.getElementById('button-testfalse').onclick = function() {socket.emit('callMethod',  {endpoint:'system_controller/system',method:'setTestSystem',data:'false'})};
 document.getElementById('button-sshenable').onclick = function() {socket.emit('callMethod',  {endpoint:'system_controller/system',method:'enableSSH',data:'true'})};
 document.getElementById('button-sshdisable').onclick = function() {socket.emit('callMethod',  {endpoint:'system_controller/system',method:'enableSSH',data:'false'})};
+document.getElementById('button-airsupportenable').onclick = function() {socket.emit('callMethod',  {endpoint:'system_controller/system',method:'enableAirSupport',data:'true'})};
+document.getElementById('button-airsupportdisable').onclick = function() {socket.emit('callMethod',  {endpoint:'system_controller/system',method:'enableAirSupport',data:'false'})};
+
+
 
 
 

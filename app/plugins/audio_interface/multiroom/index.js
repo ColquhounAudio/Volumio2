@@ -358,13 +358,13 @@ ControllerMultiroom.prototype.setMultiroom = function(sCommand) {
                 log("comp: " + multiRoom[i].type);
                 if (multiRoom[i].type == "GROUP") {
                     multiRoom[i].server.groupvolume = sCommand.groupvolume;
-                    // multiRoom[i].server.volume = sCommand.groupvolume
-                    // for (var x in multiRoom[i].clients) {
-                    // 		multiRoom[i].clients[x].volume = sCommand.groupvolume
-                    // }
+//                     multiRoom[i].server.volume = sCommand.groupvolume
+ //                    for (var x in multiRoom[i].clients) {
+  //                   		multiRoom[i].clients[x].volume = sCommand.groupvolume
+   //                  }
 
                 } else {
-                    //multiRoom[i].volume = sCommand.groupvolume
+    //                multiRoom[i].volume = sCommand.groupvolume
                 }
             }
         }

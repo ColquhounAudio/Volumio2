@@ -108,7 +108,7 @@ ControllerNetworkfs.prototype.getUIConfig = function () {
                 self.configManager.setUIConfigParam(uiconf, 'sections[3].content[2].value.label', 'artist')
             }
 
-			var ffmpeg = self.getAdditionalConf('music_service', 'mpd', 'ffmpegenable', false);
+            var ffmpeg = self.getAdditionalConf('music_service', 'mpd', 'ffmpegenable', false);
 			self.configManager.setUIConfigParam(uiconf, 'sections[3].content[3].value', ffmpeg);
 
 			var tidalconf1 = self.commandRouter.getUIConfigOnPlugin('music_service', 'tidal', '')
@@ -129,7 +129,7 @@ ControllerNetworkfs.prototype.getUIConfig = function () {
 						})
 				})
 
-//			defer.resolve(uiconf);
+			//defer.resolve(uiconf);
 		})
 		.fail(function()
 		{

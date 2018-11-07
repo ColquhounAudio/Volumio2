@@ -8,6 +8,7 @@
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.ALARM", "params": {"modalName": "modal-alarm-clock"}},
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.SLEEP", "params": {"modalName": "modal-sleep"}},
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.SHUTDOWN", "params": {"modalName": "modal-power-off"}},
-	{"id": "link", "name": "Axiom Shop", "params": {"url": "https://www.axiomaudio.com/products"}}
+    {"id": "modal", "name": "KARAOKE", "params": {"modalName": "modal-karaoke"}},
+    {"id": "link", "name": "Axiom Shop", "params": {"url": "https://www.axiomaudio.com/products"}}
   ]
 }

@@ -1,0 +1,626 @@
+'use strict';
+
+// 20180601 RMPickering - This is Plugin GPIO-buttons: index.js
+
+var libQ = require('kew');
+var fs = require('fs-extra');
+var Gpio = require('onoff').Gpio;
+var io = require('socket.io-client');
+var socket = io.connect('http://localhost:3000');
+// 20180601 RMPickering - We will need the 'child_process' module so add it in require section.
+// 20180615 RMPickering - Child process is no longer used!
+//var runInShell = require('child_process').exec;
+var execSync = require('child_process').execSync;
+
+// The source indicator LEDs
+var opticalIndicatorLed = new Gpio(506, 'out');
+var analogIndicatorLed = new Gpio(505, 'out');
+var internalIndicatorLed = new Gpio(504, 'out');
+
+var actions = ["playPause", "volumeUp", "volumeDown", "previous", "next", "shutdown"];
+
+// RMPickering - These toggle switches to be used to switch the DAC input between Pi, Optical, and RCA Analog - hardcoded to pins 5 & 6 for now! (Assuming the pins being set are using BCM pin numbering rather than physical pin numbers.)
+var inputSwitchBit0 = new Gpio(5, 'out');
+var inputSwitchBit1 = new Gpio(6, 'out');
+// RMPickering - Both switch pins are initialized to zero in a startup routine (outside JavaScript) already!
+
+// 20180524 RMPickering - Hacking the "Next" button to repurpose it as "Source Switch" button. This requires another update to config.json to add the correct GPIO pin, which is 496 (GPA0 on MCP23017). Then add write to GPIO5 and/or GPIO6 to select the correct input.
+var currentSource = 0;
+
+
+// 20180518 RMPickering - Updating onoff to latest version so as to use its improved software debounce. This requires adding a parameter to the button initialization call below!
+// 20180601 RMPickering - Can we also call a command to play whitenoise, and update our state/status?
+
+module.exports = GPIOButtons;
+
+function GPIOButtons(context) {
+    var self = this;
+    self.context = context;
+    self.commandRouter = self.context.coreCommand;
+    self.logger = self.context.logger;
+    self.triggers = [];
+
+
+}
+
+
+GPIOButtons.prototype.onVolumioStart = function () {
+    var self = this;
+   
+
+    var configFile = this.commandRouter.pluginManager.getConfigurationFile(this.context, 'config.json');
+    this.config = new (require('v-conf'))();
+    this.config.loadFile(configFile);
+
+    self.logger.info("GPIO-Buttons initialized");
+	
+
+    return libQ.resolve();
+};
+
+
+GPIOButtons.prototype.getConfigurationFiles = function () {
+    return ['config.json'];
+};
+
+
+GPIOButtons.prototype.onStart = function () {
+    var self = this;
+    var defer = libQ.defer();
+
+    // 20180629 RMPickering - Moved LED setup earlier in startup process.
+    // 20180606 RMPickering - Setup LED to indicate that the RPi itself is the selected source.
+    internalIndicatorLed.write(1);
+
+    self.createTriggers()
+        .then(function (result) {
+            self.logger.info("GPIO-Buttons started");
+            defer.resolve();
+        });
+
+    return defer.promise;
+};
+
+
+GPIOButtons.prototype.onStop = function () {
+    var self = this;
+    var defer = libQ.defer();
+
+    self.clearTriggers()
+        .then(function (result) {
+            self.logger.info("GPIO-Buttons stopped");
+            defer.resolve();
+        });
+
+    return defer.promise;
+};
+
+
+GPIOButtons.prototype.onRestart = function () {
+    var self = this;
+};
+
+GPIOButtons.prototype.onInstall = function () {
+    var self = this;
+};
+
+GPIOButtons.prototype.onUninstall = function () {
+    var self = this;
+};
+
+GPIOButtons.prototype.getConf = function (varName) {
+    var self = this;
+};
+
+GPIOButtons.prototype.setConf = function (varName, varValue) {
+    var self = this;
+};
+
+GPIOButtons.prototype.getAdditionalConf = function (type, controller, data) {
+    var self = this;
+};
+
+GPIOButtons.prototype.setAdditionalConf = function () {
+    var self = this;
+};
+
+GPIOButtons.prototype.setUIConfig = function (data) {
+    var self = this;
+};
+
+
+GPIOButtons.prototype.getUIConfig = function () {
+    var defer = libQ.defer();
+    var self = this;
+
+    self.logger.info('GPIO-Buttons: Getting UI config');
+
+    //Just for now..
+    var lang_code = 'en';
+
+    //var lang_code = this.commandRouter.sharedVars.get('language_code');
+
+    self.commandRouter.i18nJson(__dirname + '/i18n/strings_' + lang_code + '.json',
+        __dirname + '/i18n/strings_en.json',
+        __dirname + '/UIConfig.json')
+        .then(function (uiconf) {
+
+            var i = 0;
+            actions.forEach(function (action, index, array) {
+
+                // Strings for config
+                var c1 = action.concat('.enabled');
+                var c2 = action.concat('.pin');
+
+                // accessor supposes actions and uiconfig items are in SAME order
+                // this is potentially dangerous: rewrite with a JSON search of "id" value ?				
+                uiconf.sections[0].content[2 * i].value = self.config.get(c1);
+                uiconf.sections[0].content[2 * i + 1].value.value = self.config.get(c2);
+                uiconf.sections[0].content[2 * i + 1].value.label = self.config.get(c2).toString();
+
+                i = i + 1;
+            });
+
+            defer.resolve(uiconf);
+        })
+        .fail(function () {
+            defer.reject(new Error());
+        });
+
+    return defer.promise;
+};
+
+
+GPIOButtons.prototype.saveConfig = function (data) {
+    var self = this;
+
+    actions.forEach(function (action, index, array) {
+        // Strings for data fields
+        var s1 = action.concat('Enabled');
+        var s2 = action.concat('Pin');
+
+        // Strings for config
+        var c1 = action.concat('.enabled');
+        var c2 = action.concat('.pin');
+        var c3 = action.concat('.value');
+
+        self.config.set(c1, data[s1]);
+        self.config.set(c2, data[s2]['value']);
+        self.config.set(c3, 0);
+    });
+
+    self.clearTriggers()
+        .then(self.createTriggers());
+
+    self.commandRouter.pushToastMessage('success', "GPIO-Buttons", "Configuration saved");
+};
+
+
+GPIOButtons.prototype.createTriggers = function () {
+    var self = this;
+
+    self.logger.info('GPIO-Buttons: Reading config and creating triggers...');
+
+    actions.forEach(function (action, index, array) {
+        var c1 = action.concat('.enabled');
+        var c2 = action.concat('.pin');
+
+        var enabled = self.config.get(c1);
+        var pin = self.config.get(c2);
+
+        if (enabled === true) {
+            self.logger.info('GPIO-Buttons: ' + action + ' on pin ' + pin);
+            // RMPickering - Supply recommended debounceTimeout of 10 msec for each trigger!
+            //            var j = new Gpio(pin, 'in', 'both', { debounceTimeout: 10 });
+            var j = new Gpio(pin, 'in', 'both');
+            j.watch(self.listener.bind(self, action));
+            self.triggers.push(j);
+        }
+    });
+
+    return libQ.resolve();
+};
+
+
+GPIOButtons.prototype.clearTriggers = function () {
+    var self = this;
+
+    self.triggers.forEach(function (trigger, index, array) {
+        self.logger.info("GPIO-Buttons: Destroying trigger " + index);
+
+        trigger.unwatchAll();
+        trigger.unexport();
+    });
+
+    self.triggers = [];
+
+    return libQ.resolve();
+};
+
+
+GPIOButtons.prototype.listener = function (action, err, value) {
+    var self = this;
+
+    var c3 = action.concat('.value');
+    var lastvalue = self.config.get(c3);
+
+    // IF change AND high (or low?)
+    if (value !== lastvalue && value === 1) {
+        //do thing
+        self[action]();
+    }
+    // remember value
+    self.config.set(c3, value);
+};
+
+// 20180508 RMPickering - Implement 'smart' Pause / Mute - if active service is pausable, then pause/play, otherwise mute/unmute.
+GPIOButtons.prototype.playPause = function () {
+    socket.emit('getState', '');
+    socket.once('pushState', function (state) {
+    //    if (state.volatile) {
+            if (state.mute) {
+                socket.emit('unmute');
+            } else {
+                socket.emit('mute');
+            }
+            // playing non-volatile source that can be paused
+     //   } else if (state.status == 'play') {
+     //       socket.emit('pause');
+     //   } else {
+     //       socket.emit('play');
+     //   }
+    });
+
+};
+
+GPIOButtons.prototype.setInternal = function(){
+	var self = this;
+        // we were already on source #2 so need to start back at source zero (the Pi itself)
+         // switch pin down and update current source
+        //inputSwitchBit1.write(0);
+        //currentSource = 0;
+        this.logger.info('GPIO-Buttons: switched from source 2 back to 0');
+        // internalIndicatorLed.write(1);
+        // 20180615 RMPickering - The switchOffExtInput function is needed anyway, in case the User presses the "Cancel" button in the modal popup, so let's use it here to do everything needed to reset to Pi input!
+        this.switchOffExtInput();
+	
+}
+GPIOButtons.prototype.setAnalog = function(){
+	var self = this;
+	socket.emit('getState', '');
+    	execSync(" sudo systemctl stop a2dp-playback.service" );
+    	socket.once('pushState', function (state) {
+	 if (state.service == 'spop') {
+	self.playbackTimeRunning=false;
+            self.commandRouter.stateMachine.unSetVolatile();
+            self.commandRouter.stateMachine.resetVolumioState().then(
+                self.commandRouter.volumioStop.bind(self.commandRouter));
+		
+
+	//20180703-Emre Ozkan setting the background noise service depend on service name if it is spop start it in 1 sec otherwise start immediately.
+
+	setTimeout(function(){
+	execSync (" sudo systemctl start background_noise.service" );
+ 	}, 500);
+    		
+	}
+	else {
+		execSync (" sudo systemctl start background_noise.service" );
+
+	}
+	});
+
+
+
+
+	// select source #2 - switching from 1 to 2 requires turning bit0 off and bit1 on!
+        inputSwitchBit0.write(0);
+        inputSwitchBit1.write(1);
+        currentSource = 1;
+        analogIndicatorLed.write(1);
+        opticalIndicatorLed.write(0);
+        internalIndicatorLed.write(0);
+        this.logger.info('GPIO-Buttons: switched from source 1 to 2');
+
+        //06/08/2018: Afrodita Kujumdzieva - play whitenoise in the background
+        // runInShell(" play -n synth whitenoise ");
+
+        // 06/08/2018: Afrodita Kujumdzieva - close all modals that are currently open
+        this.commandRouter.closeModals();
+	
+	
+        // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
+        // 20180615 RMPickering - Updated title of modal to "External Input"
+        var modalDataAnalogue = {
+            title: 'External Input',
+            message: 'Analogue Input is selected.',
+            size: 'lg',
+            buttons: [
+                {
+                    name: 'Cancel',
+                    class: 'btn btn-info',
+                    emit: 'switchOffExtInput',
+                    payload: ''
+                }
+            ]
+        }
+
+
+
+        this.commandRouter.broadcastMessage("openModal", modalDataAnalogue);
+
+
+}
+GPIOButtons.prototype.setOptical = function(){
+	var self = this;
+// TODO: We need to stop current player then play whitenoise on the Pi!	
+
+	//20180703-Emre Ozkan resetting the statemachine to disconnect from spotify!
+	
+	socket.emit('getState', '');
+    	execSync(" sudo systemctl stop a2dp-playback.service" );
+    	socket.once('pushState', function (state) {
+
+	 if (state.service == 'spop') {
+	self.playbackTimeRunning=false;
+            self.commandRouter.stateMachine.unSetVolatile();
+            self.commandRouter.stateMachine.resetVolumioState().then(
+                self.commandRouter.volumioStop.bind(self.commandRouter));
+		
+
+	//20180703-Emre Ozkan setting the background noise service depend on service name if it is spop start it in 1 sec otherwise start immediately.
+
+	setTimeout(function(){
+	execSync (" sudo systemctl start background_noise.service" );
+ 	}, 500);
+    		
+	}
+	else {
+		execSync (" sudo systemctl start background_noise.service" );
+
+	}
+	});
+
+
+
+	
+  // 20180615 RMPickering - we only need to pause in case the current source is Pi, so moved this emit from before the IF statement.
+  //06/08/2018: Afrodita Kujumdzieva - Pause whatever is playing when clicking source switch
+  
+	socket.emit('pause');
+        		
+	
+	//20180629-Emre Ozkan adding a Modal for external-prepering step
+	
+	/*var modalDataPreparing = {
+            title: 'Please Wait',
+            message: 'Please wait while External Input switching is completed.',
+            size: 'sm',
+		buttons: [
+                {
+                    name: 'Cancel',
+                    class: 'btn btn-info',
+                    emit: 'switchOffExtInput',
+                    payload: ''
+                }
+            ]
+
+                       
+        }
+
+
+        this.commandRouter.broadcastMessage("openModal", modalDataPreparing); 
+	
+	//20180629-Emre Ozkan - call a shell command to pause for 7 seconds
+//execSync (" sleep 7 "); */
+
+
+
+	opticalIndicatorLed.write(1);
+        internalIndicatorLed.write(0);
+        analogIndicatorLed.write(0);
+        // select source #1
+        inputSwitchBit0.write(1);
+        inputSwitchBit1.write(0);
+        currentSource = 2;
+
+	
+	
+	// 06/08/2018: Afrodita Kujumdzieva - close all modals currently opened
+        this.commandRouter.closeModals();
+
+        this.logger.info('GPIO-Buttons: switched from source 0 to 1');
+
+	 // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
+        // 20180615 RMPickering - Updated title of modal to "External Input"
+        var modalDataOptical = {
+            title: 'External Input',
+            message: 'Optical Input is selected.',
+            size: 'lg',
+            buttons: [
+                {
+                    name: 'Cancel',
+                    class: 'btn btn-info',
+                    emit: 'switchOffExtInput',
+                    payload: ''
+                }
+            ]
+        }
+
+	this.commandRouter.broadcastMessage("openModal", modalDataOptical);
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+}
+GPIOButtons.prototype.setBluetooth = function(){
+	var self = this;
+	socket.emit('getState', '');
+    	socket.once('pushState', function (state) {
+
+	});
+
+	setTimeout(function(){
+	    execSync(" sudo systemctl stop background_noise.service" );
+ 	}, 500);
+	setTimeout(function(){
+	    execSync(" sudo systemctl start a2dp-playback.service" );
+ 	}, 1000);
+
+	socket.emit('pause');
+        		
+	opticalIndicatorLed.write(1);
+        internalIndicatorLed.write(1);
+        analogIndicatorLed.write(1);
+        // select source #1
+        inputSwitchBit0.write(0);
+        inputSwitchBit1.write(0);
+        currentSource = 3;
+
+	
+	
+	// 06/08/2018: Afrodita Kujumdzieva - close all modals currently opened
+        this.commandRouter.closeModals();
+
+        this.logger.info('GPIO-Buttons: switched from source 0 to 1');
+
+	 // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
+        // 20180615 RMPickering - Updated title of modal to "External Input"
+        var modalDataOptical = {
+            title: 'Bluetooth Input',
+            message: 'Bluetooth Input is selected.',
+            size: 'lg',
+            buttons: [
+                {
+                    name: 'Cancel',
+                    class: 'btn btn-info',
+                    emit: 'switchOffExtInput',
+                    payload: ''
+                }
+            ]
+        }
+
+	this.commandRouter.broadcastMessage("openModal", modalDataOptical);
+
+
+}
+
+
+
+
+//next button
+GPIOButtons.prototype.next = function () {
+	var self = this;
+    this.logger.info('GPIO-Buttons: initiate source switch');
+
+	//20180629-Emre Ozkan - Pushing the state machine to reset when airplay streaming
+	socket.emit('getState', '');
+    	socket.once('pushState', function (state) {
+	if (state.service == 'airplay')
+	{
+		self.playbackTimeRunning=false;
+            self.commandRouter.stateMachine.unSetVolatile();
+            self.commandRouter.stateMachine.resetVolumioState().then(
+                self.commandRouter.volumioStop.bind(self.commandRouter));
+	}
+	});
+
+	 
+
+    //this.logger.info('GPIO-Buttons: writing to indicator led on pin 506');
+    // RMPickering - Repurpose this button to scroll between the available sources on the DAC. This is meant to be implemented as a repeating ring scrolling from source 0 to 1 to 2 and so on, then starting back at zero again.
+    // The input zero is the Pi itself, and the current DAC version has two other inputs available which are numbered as 1 and 2.
+    // Input #0 is selecting by setting GPIO5 & GPIO6 both low.
+    // Input #1 is selected by setting GPIO5 high and GPIO6 low.
+    // Input #2 is selected by setting GPIO6 high and GPIO5 low.
+
+
+ if (currentSource === 0) {
+	this.setAnalog();
+
+    } 
+ else if (currentSource === 1) {
+ 	this.setOptical();       
+
+    } 
+ else if (currentSource === 2) {
+ 	this.setBluetooth();       
+
+    } 
+ 
+ else {
+	this.setInternal();
+
+    }
+};
+
+//previous on playlist
+GPIOButtons.prototype.previous = function () {
+    //this.logger.info('GPIO-Buttons: previous-button pressed');
+    socket.emit('prev');
+};
+
+//Volume up
+GPIOButtons.prototype.volumeUp = function () {
+    //this.logger.info('GPIO-Buttons: Vol+ button pressed');
+    socket.emit('volume', '+');
+};
+
+//Volume down
+GPIOButtons.prototype.volumeDown = function () {
+    //this.logger.info('GPIO-Buttons: Vol- button pressed\n');
+    socket.emit('volume', '-');
+};
+
+//shutdown
+GPIOButtons.prototype.shutdown = function () {
+
+	var self = this;
+    // this.logger.info('GPIO-Buttons: shutdown button pressed\n');
+
+    // 20180629 RMPickering - Add a mute before shutdown.
+    socket.emit('mute');
+
+	//20180628-Emre Ozkan- airplay service restarted to cancel the connection
+		self.playbackTimeRunning=false;
+            	self.commandRouter.stateMachine.unSetVolatile();
+            	self.commandRouter.stateMachine.resetVolumioState().then(
+                self.commandRouter.volumioStop.bind(self.commandRouter));
+
+
+    // We want to ensure that all playback has stopped before shutdown.	
+    socket.emit('stop');
+
+ 
+   // 20180627 RMPickering - The switchOffExtInput function is needed here, in case an external input was previously selected, so that we don't have a noisy shutdown.
+    this.switchOffExtInput();
+
+    this.commandRouter.shutdown();
+};
+
+
+// 06/08/2018: Afrodita Kujumdzieva - Adding function to switch off external source
+// This function is called from the file /volumio/app/plugins/user_interface/websocket/index.js
+
+GPIOButtons.prototype.switchOffExtInput = function () {
+    // 06/08/2018: Afrodita Kujumdzieva - close all modals currently open
+    	this.commandRouter.closeModals();
+
+
+    //20180628-Emre Ozkan- Background noise service called 
+    execSync(" sudo systemctl stop a2dp-playback.service" );
+    execSync(" sudo systemctl stop background_noise.service" );
+
+    inputSwitchBit0.write(0);
+    inputSwitchBit1.write(0);
+    currentSource = 0;
+    this.logger.info('GPIO-Buttons: switched to source 0');
+    internalIndicatorLed.write(1);
+    analogIndicatorLed.write(0);
+    opticalIndicatorLed.write(0);
+
+};
+
+
+
