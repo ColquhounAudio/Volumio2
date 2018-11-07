@@ -75,7 +75,8 @@ if [[ "$RTC" == "true" && "$APC" == "true" && "$TIME" == "true" ]]; then
       echo "All tests passed"
 
       /usr/bin/aplay /volumio/axiom/qc/passed.wav
-
+      /usr/bin/aplay /volumio/axiom/qc/passed.wav
+      /usr/bin/aplay /volumio/axiom/qc/passed.wav
 
 	/bin/systemctl disable qualitycheck.service
         /bin/systemctl stop qualitycheck.service
@@ -89,6 +90,8 @@ else
      /usr/bin/aplay /volumio/axiom/qc/failed.wav
     sleep 10
 fi
+
+   /usr/bin/amixer -M set -c 0 "Digital" 50%
 }
 
 
@@ -101,7 +104,7 @@ checktime
 echo "Testing Apple Chip"
 findapplechip
 testsound
-
+echo "Ran QC test" >> /home/volumio/qc.log
 sync
 
 exit 0
