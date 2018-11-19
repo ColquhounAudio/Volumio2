@@ -366,6 +366,11 @@ CoreVolumeController.prototype.alsavolume = function (VolumeInteger) {
 			break;
 		default:
 			// Set the Volume with numeric value 0-100
+				
+			if (VolumeInteger > 1000){
+				VolumeInteger = VolumeInteger/655.35;
+			}
+
 			if (VolumeInteger < 0){
 				VolumeInteger = 0;
 			}
