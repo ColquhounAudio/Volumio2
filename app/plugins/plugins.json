@@ -153,18 +153,7 @@
         "type": "string",
         "value": "STARTED"
       }
-    },
-    "bluetooth": {
-      "enabled": {
-        "type": "boolean",
-        "value": true
-      },
-      "status": {
-        "type": "string",
-        "value": "STARTED"
-      }
     }
-
 
   },
   "miscellanea": {
