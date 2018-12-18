@@ -21,7 +21,7 @@
   },
   "hotspot_name": {
     "type": "string",
-    "value": "AxiomAir"
+    "value": "AxiomAir-33112d"
   },
   "hotspot_protection": {
     "type": "boolean",

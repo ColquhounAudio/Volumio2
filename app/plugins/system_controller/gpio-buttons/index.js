@@ -454,58 +454,6 @@ GPIOButtons.prototype.setOptical = function(){
 
 
 }
-GPIOButtons.prototype.setBluetooth = function(){
-	var self = this;
-	socket.emit('getState', '');
-    	socket.once('pushState', function (state) {
-
-	});
-
-	setTimeout(function(){
-	    execSync(" sudo systemctl stop background_noise.service" );
- 	}, 500);
-	setTimeout(function(){
-	    execSync(" sudo systemctl start a2dp-playback.service" );
- 	}, 1000);
-
-	socket.emit('pause');
-        		
-	opticalIndicatorLed.write(1);
-        internalIndicatorLed.write(1);
-        analogIndicatorLed.write(1);
-        // select source #1
-        inputSwitchBit0.write(0);
-        inputSwitchBit1.write(0);
-        currentSource = 3;
-
-	
-	
-	// 06/08/2018: Afrodita Kujumdzieva - close all modals currently opened
-        this.commandRouter.closeModals();
-
-        this.logger.info('GPIO-Buttons: switched from source 0 to 1');
-
-	 // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
-        // 20180615 RMPickering - Updated title of modal to "External Input"
-        var modalDataOptical = {
-            title: 'Bluetooth Input',
-            message: 'Bluetooth Input is selected.',
-            size: 'lg',
-            buttons: [
-                {
-                    name: 'Cancel',
-                    class: 'btn btn-info',
-                    emit: 'switchOffExtInput',
-                    payload: ''
-                }
-            ]
-        }
-
-	this.commandRouter.broadcastMessage("openModal", modalDataOptical);
-
-
-}
-
 
 
 
@@ -544,11 +492,6 @@ GPIOButtons.prototype.next = function () {
  	this.setOptical();       
 
     } 
- else if (currentSource === 2) {
- 	this.setBluetooth();       
-
-    } 
- 
  else {
 	this.setInternal();
 
