@@ -143,7 +143,7 @@ ControllerNetwork.prototype.getUIConfig = function () {
 
 			if (config.get('hotspot_name') == undefined) {
 				//Emre Ozkan hotspot name changed to Axiom Air
-				uiconf.sections[4].content[2].value = 'AxiomAir';
+				uiconf.sections[4].content[2].value = 'BryFi';
 			} else {
 				uiconf.sections[4].content[2].value = config.get('hotspot_name');
 			}

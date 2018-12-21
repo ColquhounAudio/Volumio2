@@ -1,6 +1,6 @@
 'use strict';
 
-// 20180528 RMPickering - change hardcoding of program title from "Volumio" to "AxiomAir"
+// 20180528 RMPickering - change hardcoding of program title from "Volumio" to "BryFi"
 
 var fs=require('fs-extra');
 var config= new (require('v-conf'))();
@@ -164,8 +164,8 @@ volumioAppearance.prototype.getUiSettings = function()
     var theme = config.get('theme');
     var background_type = config.get('background_type');
 
-    // 20180528 RMPickering - change hardcoding of program title from "Volumio" to "AxiomAir"
-    var metatitle = config.get('metatitle', 'AxiomAir - Digital Music Player');
+    // 20180528 RMPickering - change hardcoding of program title from "Volumio" to "BryFi"
+    var metatitle = config.get('metatitle', 'BryFi - Digital Music Player');
 
     if (background_type === 'background') {
         var background_title = config.get('background_title');

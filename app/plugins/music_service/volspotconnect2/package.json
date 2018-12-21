@@ -1,7 +1,7 @@
 {
 	"name": "volspotconnect2",
 	"version": "0.7.0",
-	"description": "Spotify Connect for AxiomAir",
+	"description": "Spotify Connect for BryFi",
 	"main": "index.js",
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1"

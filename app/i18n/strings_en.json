@@ -7,7 +7,7 @@
     "ENABLE_I2S_DAC":"Enable I2S DACs",
     "GAPLESS_MP3_PLAYBACK":"Gapless MP3 playback",
     "VOLUME_NORMALIZATION":"Volume normalization",
-	"VOLUME_NORMALIZATION_DOC":"If turned On AxiomAir will normalize the volume of tracks as they play. This might reduce sound quality",
+	"VOLUME_NORMALIZATION_DOC":"If turned On BryFi will normalize the volume of tracks as they play. This might reduce sound quality",
     "AUDIO_BUFFER_SIZE":"Audio buffer size",
 	"AUDIO_BUFFER_SIZE_DOC":"This specifies the size of the audio buffer. Increase it to avoid chances of audio stuttering over Network",
     "BUFFER_BEFORE_PLAY":"Buffer before play",

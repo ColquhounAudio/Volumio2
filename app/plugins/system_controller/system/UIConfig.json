@@ -23,7 +23,7 @@
           "element": "input",
           "doc": "TRANSLATE.SYSTEM.PLAYER_NAME_DOC",
           "label": "TRANSLATE.SYSTEM.PLAYER_NAME",
-          "value": "AxiomAir"
+          "value": "BryFi"
         },
         {
           "id":"startup_sound",

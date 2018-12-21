@@ -1,5 +1,5 @@
 {
-  "name": "AxiomAirNG",
+  "name": "BryFiNG",
   "version": "2.0.0-alpha4",
   "private": false,
   "scripts": {
@@ -78,6 +78,6 @@
     "url": "TBD"
   },
   "bugs": {
-    "url": "https://www.axiomaudio.com/boards/ubbthreads.php/forums/19/1/AxiomAir_General_Discussion"
+    "url": "https://www.axiomaudio.com/boards/ubbthreads.php/forums/19/1/BryFi_General_Discussion"
   }
 }

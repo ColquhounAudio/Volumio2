@@ -9,7 +9,7 @@ var spawn = require('child_process').spawn;
 var crypto = require('crypto');
 var calltrials = 0;
 
-// 20180517 RMPickering - Adding code to show network status (WiFi Connected or HotSpot mode) on AxiomAir LEDs.
+// 20180517 RMPickering - Adding code to show network status (WiFi Connected or HotSpot mode) on BryFi LEDs.
 //var Gpio = require('onoff').Gpio;
 
 // GPIO pin of the WiFi LED - set it up in output mode!
