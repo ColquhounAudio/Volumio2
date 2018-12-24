@@ -288,7 +288,6 @@ GPIOButtons.prototype.setInternal = function(){
 GPIOButtons.prototype.setAnalog = function(){
 	var self = this;
 	socket.emit('getState', '');
-    	execSync(" sudo systemctl stop a2dp-playback.service" );
     	socket.once('pushState', function (state) {
 	 if (state.service == 'spop') {
 	self.playbackTimeRunning=false;
@@ -358,7 +357,6 @@ GPIOButtons.prototype.setOptical = function(){
 	//20180703-Emre Ozkan resetting the statemachine to disconnect from spotify!
 	
 	socket.emit('getState', '');
-    	execSync(" sudo systemctl stop a2dp-playback.service" );
     	socket.once('pushState', function (state) {
 
 	 if (state.service == 'spop') {
@@ -552,7 +550,6 @@ GPIOButtons.prototype.switchOffExtInput = function () {
 
 
     //20180628-Emre Ozkan- Background noise service called 
-    execSync(" sudo systemctl stop a2dp-playback.service" );
     execSync(" sudo systemctl stop background_noise.service" );
 
     inputSwitchBit0.write(0);
