@@ -46,14 +46,14 @@ function GPIOButtons(context) {
 
 GPIOButtons.prototype.onVolumioStart = function () {
     var self = this;
-   
+
 
     var configFile = this.commandRouter.pluginManager.getConfigurationFile(this.context, 'config.json');
     this.config = new (require('v-conf'))();
     this.config.loadFile(configFile);
 
     self.logger.info("GPIO-Buttons initialized");
-	
+
 
     return libQ.resolve();
 };
@@ -153,7 +153,7 @@ GPIOButtons.prototype.getUIConfig = function () {
                 var c2 = action.concat('.pin');
 
                 // accessor supposes actions and uiconfig items are in SAME order
-                // this is potentially dangerous: rewrite with a JSON search of "id" value ?				
+                // this is potentially dangerous: rewrite with a JSON search of "id" value ?
                 uiconf.sections[0].content[2 * i].value = self.config.get(c1);
                 uiconf.sections[0].content[2 * i + 1].value.value = self.config.get(c2);
                 uiconf.sections[0].content[2 * i + 1].value.label = self.config.get(c2).toString();
@@ -274,7 +274,7 @@ GPIOButtons.prototype.playPause = function () {
 };
 
 GPIOButtons.prototype.setInternal = function(){
-	var self = this;
+        var self = this;
         // we were already on source #2 so need to start back at source zero (the Pi itself)
          // switch pin down and update current source
         //inputSwitchBit1.write(0);
@@ -283,37 +283,36 @@ GPIOButtons.prototype.setInternal = function(){
         // internalIndicatorLed.write(1);
         // 20180615 RMPickering - The switchOffExtInput function is needed anyway, in case the User presses the "Cancel" button in the modal popup, so let's use it here to do everything needed to reset to Pi input!
         this.switchOffExtInput();
-	
+
 }
 GPIOButtons.prototype.setAnalog = function(){
-	var self = this;
-	socket.emit('getState', '');
-    	execSync(" sudo systemctl stop a2dp-playback.service" );
-    	socket.once('pushState', function (state) {
-	 if (state.service == 'spop') {
-	self.playbackTimeRunning=false;
+        var self = this;
+        socket.emit('getState', '');
+        socket.once('pushState', function (state) {
+         if (state.service == 'spop') {
+        self.playbackTimeRunning=false;
             self.commandRouter.stateMachine.unSetVolatile();
             self.commandRouter.stateMachine.resetVolumioState().then(
                 self.commandRouter.volumioStop.bind(self.commandRouter));
-		
-
-	//20180703-Emre Ozkan setting the background noise service depend on service name if it is spop start it in 1 sec otherwise start immediately.
-
-	setTimeout(function(){
-	execSync (" sudo systemctl start background_noise.service" );
- 	}, 500);
-    		
-	}
-	else {
-		execSync (" sudo systemctl start background_noise.service" );
-
-	}
-	});
 
 
+        //20180703-Emre Ozkan setting the background noise service depend on service name if it is spop start it in 1 sec otherwise start immediately.
+
+        setTimeout(function(){
+        execSync (" sudo systemctl start background_noise.service" );
+        }, 500);
+
+        }
+        else {
+                execSync (" sudo systemctl start background_noise.service" );
+
+        }
+        });
 
 
-	// select source #2 - switching from 1 to 2 requires turning bit0 off and bit1 on!
+
+
+        // select source #2 - switching from 1 to 2 requires turning bit0 off and bit1 on!
         inputSwitchBit0.write(0);
         inputSwitchBit1.write(1);
         currentSource = 1;
@@ -326,11 +325,12 @@ GPIOButtons.prototype.setAnalog = function(){
         // runInShell(" play -n synth whitenoise ");
 
         // 06/08/2018: Afrodita Kujumdzieva - close all modals that are currently open
-        this.commandRouter.closeModals();
-	
-	
+        //this.commandRouter.closeModals();
+
+
         // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
         // 20180615 RMPickering - Updated title of modal to "External Input"
+        /*
         var modalDataAnalogue = {
             title: 'External Input',
             message: 'Analogue Input is selected.',
@@ -348,55 +348,81 @@ GPIOButtons.prototype.setAnalog = function(){
 
 
         this.commandRouter.broadcastMessage("openModal", modalDataAnalogue);
+        */
+
+
+        self.commandRouter.pushToastMessage('success', "Analog Input", 'ON');
+        setTimeout(function(){
+                //self.undock();
+
+
+                self.commandRouter.stateMachine.setVolatile({
+                        service: "analogin",
+                        callback: self.setVolatileCallback.bind(self)
+
+                });
+                var status = {};
+                status.status = 'play';
+                status.service = 'analogin';
+                status.title = 'Analog Input';
+                status.seek = 0;
+                status.duration = 0;
+                status.albumart = '/albumart?web=default';
+                status.artist = '';
+                status.album = '';
+
+                console.log(status)
+                self.commandRouter.servicePushState(status, 'analogin');
+
+        }, 900);
 
 
 }
 GPIOButtons.prototype.setOptical = function(){
-	var self = this;
-// TODO: We need to stop current player then play whitenoise on the Pi!	
+        var self = this;
+// TODO: We need to stop current player then play whitenoise on the Pi!
 
-	//20180703-Emre Ozkan resetting the statemachine to disconnect from spotify!
-	
-	socket.emit('getState', '');
-    	execSync(" sudo systemctl stop a2dp-playback.service" );
-    	socket.once('pushState', function (state) {
+        //20180703-Emre Ozkan resetting the statemachine to disconnect from spotify!
 
-	 if (state.service == 'spop') {
-	self.playbackTimeRunning=false;
+        socket.emit('getState', '');
+        socket.once('pushState', function (state) {
+
+         if (state.service == 'spop') {
+        self.playbackTimeRunning=false;
             self.commandRouter.stateMachine.unSetVolatile();
             self.commandRouter.stateMachine.resetVolumioState().then(
                 self.commandRouter.volumioStop.bind(self.commandRouter));
-		
-
-	//20180703-Emre Ozkan setting the background noise service depend on service name if it is spop start it in 1 sec otherwise start immediately.
-
-	setTimeout(function(){
-	execSync (" sudo systemctl start background_noise.service" );
- 	}, 500);
-    		
-	}
-	else {
-		execSync (" sudo systemctl start background_noise.service" );
-
-	}
-	});
 
 
+        //20180703-Emre Ozkan setting the background noise service depend on service name if it is spop start it in 1 sec otherwise start immediately.
 
-	
+        setTimeout(function(){
+        execSync (" sudo systemctl start background_noise.service" );
+        }, 500);
+
+        }
+        else {
+                execSync (" sudo systemctl start background_noise.service" );
+
+        }
+        });
+
+
+
+
   // 20180615 RMPickering - we only need to pause in case the current source is Pi, so moved this emit from before the IF statement.
   //06/08/2018: Afrodita Kujumdzieva - Pause whatever is playing when clicking source switch
-  
-	socket.emit('pause');
-        		
-	
-	//20180629-Emre Ozkan adding a Modal for external-prepering step
-	
-	/*var modalDataPreparing = {
+
+        socket.emit('pause');
+
+
+        //20180629-Emre Ozkan adding a Modal for external-prepering step
+
+        /*var modalDataPreparing = {
             title: 'Please Wait',
             message: 'Please wait while External Input switching is completed.',
             size: 'sm',
-		buttons: [
+                buttons: [
                 {
                     name: 'Cancel',
                     class: 'btn btn-info',
@@ -405,18 +431,18 @@ GPIOButtons.prototype.setOptical = function(){
                 }
             ]
 
-                       
+
         }
 
 
-        this.commandRouter.broadcastMessage("openModal", modalDataPreparing); 
-	
-	//20180629-Emre Ozkan - call a shell command to pause for 7 seconds
+        this.commandRouter.broadcastMessage("openModal", modalDataPreparing);
+
+        //20180629-Emre Ozkan - call a shell command to pause for 7 seconds
 //execSync (" sleep 7 "); */
 
 
 
-	opticalIndicatorLed.write(1);
+        opticalIndicatorLed.write(1);
         internalIndicatorLed.write(0);
         analogIndicatorLed.write(0);
         // select source #1
@@ -424,15 +450,16 @@ GPIOButtons.prototype.setOptical = function(){
         inputSwitchBit1.write(0);
         currentSource = 2;
 
-	
-	
-	// 06/08/2018: Afrodita Kujumdzieva - close all modals currently opened
-        this.commandRouter.closeModals();
+
+
+        // 06/08/2018: Afrodita Kujumdzieva - close all modals currently opened
+        //this.commandRouter.closeModals();
 
         this.logger.info('GPIO-Buttons: switched from source 0 to 1');
 
-	 // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
+         // 06/08/2018: Afrodita Kujumdzieva - added a modal so that when next button is clicked to switch to optical input a confirmation modal will pop up
         // 20180615 RMPickering - Updated title of modal to "External Input"
+        /*
         var modalDataOptical = {
             title: 'External Input',
             message: 'Optical Input is selected.',
@@ -447,7 +474,31 @@ GPIOButtons.prototype.setOptical = function(){
             ]
         }
 
-	this.commandRouter.broadcastMessage("openModal", modalDataOptical);
+        this.commandRouter.broadcastMessage("openModal", modalDataOptical);
+        */
+        self.commandRouter.pushToastMessage('success', "Optical Input", 'ON');
+        setTimeout(function(){
+                //self.undock();
+
+
+                self.commandRouter.stateMachine.setVolatile({
+                        service: "opticalin",
+                        callback: self.setVolatileCallback.bind(self)
+                });
+                var status = {};
+                status.status = 'play';
+                status.service = 'opticalin';
+                status.title = 'Optical Input';
+                status.seek = 0;
+                status.duration = 0;
+                status.albumart = '/albumart?web=default';
+                status.artist = '';
+                status.album = '';
+
+                console.log(status)
+                self.commandRouter.servicePushState(status, 'opticalin');
+
+        }, 900);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -459,22 +510,22 @@ GPIOButtons.prototype.setOptical = function(){
 
 //next button
 GPIOButtons.prototype.next = function () {
-	var self = this;
+        var self = this;
     this.logger.info('GPIO-Buttons: initiate source switch');
 
-	//20180629-Emre Ozkan - Pushing the state machine to reset when airplay streaming
-	socket.emit('getState', '');
-    	socket.once('pushState', function (state) {
-	if (state.service == 'airplay')
-	{
-		self.playbackTimeRunning=false;
+        //20180629-Emre Ozkan - Pushing the state machine to reset when airplay streaming
+        socket.emit('getState', '');
+        socket.once('pushState', function (state) {
+        if (state.service == 'airplay')
+        {
+                self.playbackTimeRunning=false;
             self.commandRouter.stateMachine.unSetVolatile();
             self.commandRouter.stateMachine.resetVolumioState().then(
                 self.commandRouter.volumioStop.bind(self.commandRouter));
-	}
-	});
+        }
+        });
 
-	 
+
 
     //this.logger.info('GPIO-Buttons: writing to indicator led on pin 506');
     // RMPickering - Repurpose this button to scroll between the available sources on the DAC. This is meant to be implemented as a repeating ring scrolling from source 0 to 1 to 2 and so on, then starting back at zero again.
@@ -485,15 +536,15 @@ GPIOButtons.prototype.next = function () {
 
 
  if (currentSource === 0) {
-	this.setAnalog();
+        this.setAnalog();
 
-    } 
+    }
  else if (currentSource === 1) {
- 	this.setOptical();       
+        this.setOptical();
 
-    } 
+    }
  else {
-	this.setInternal();
+        this.setInternal();
 
     }
 };
@@ -519,23 +570,23 @@ GPIOButtons.prototype.volumeDown = function () {
 //shutdown
 GPIOButtons.prototype.shutdown = function () {
 
-	var self = this;
+        var self = this;
     // this.logger.info('GPIO-Buttons: shutdown button pressed\n');
 
     // 20180629 RMPickering - Add a mute before shutdown.
     socket.emit('mute');
 
-	//20180628-Emre Ozkan- airplay service restarted to cancel the connection
-		self.playbackTimeRunning=false;
-            	self.commandRouter.stateMachine.unSetVolatile();
-            	self.commandRouter.stateMachine.resetVolumioState().then(
+        //20180628-Emre Ozkan- airplay service restarted to cancel the connection
+                self.playbackTimeRunning=false;
+                self.commandRouter.stateMachine.unSetVolatile();
+                self.commandRouter.stateMachine.resetVolumioState().then(
                 self.commandRouter.volumioStop.bind(self.commandRouter));
 
 
-    // We want to ensure that all playback has stopped before shutdown.	
+    // We want to ensure that all playback has stopped before shutdown.
     socket.emit('stop');
 
- 
+
    // 20180627 RMPickering - The switchOffExtInput function is needed here, in case an external input was previously selected, so that we don't have a noisy shutdown.
     this.switchOffExtInput();
 
@@ -548,11 +599,11 @@ GPIOButtons.prototype.shutdown = function () {
 
 GPIOButtons.prototype.switchOffExtInput = function () {
     // 06/08/2018: Afrodita Kujumdzieva - close all modals currently open
-    	this.commandRouter.closeModals();
+        //this.commandRouter.closeModals();
+        this.commandRouter.stateMachine.unSetVolatile();
+        this.commandRouter.stateMachine.pushState();
 
-
-    //20180628-Emre Ozkan- Background noise service called 
-    execSync(" sudo systemctl stop a2dp-playback.service" );
+    //20180628-Emre Ozkan- Background noise service called
     execSync(" sudo systemctl stop background_noise.service" );
 
     inputSwitchBit0.write(0);
@@ -565,5 +616,5 @@ GPIOButtons.prototype.switchOffExtInput = function () {
 
 };
 
-
-
+GPIOButtons.prototype.setVolatileCallback = function () {
+};
