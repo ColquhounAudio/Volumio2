@@ -12,11 +12,11 @@
     "type": "string"
   },
   "background_title": {
-    "value": "Axiom",
+    "value": "BryFi",
     "type": "string"
   },
   "background_path": {
-    "value": "axiom.jpg",
+    "value": "bryfi.jpg",
     "type": "string"
   },
   "background_color": {
