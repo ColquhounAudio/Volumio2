@@ -1,29 +1,35 @@
 [global]
-netbios name = {NAME}
-server string = Audiophile Music Player
-workgroup = WORKGROUP
-security = user
-map to guest = Bad User
-encrypt passwords = yes
-wins support = yes
-local master = no
-preferred master = no
-os level = 30
+   workgroup = WORKGROUP
+   dns proxy = no
+   log file = /var/log/samba/log.%m
+   max log size = 1000
+   syslog = 0
+   panic action = /usr/share/samba/panic-action %d
+   server role = standalone server
+   passdb backend = tdbsam
+   obey pam restrictions = yes
+   unix password sync = yes
+   passwd program = /usr/bin/passwd %u
+   passwd chat = *Enter\snew\s*\spassword:* %n\n *Retype\snew\s*\spassword:* %n\                                                                                                                          n *password\supdated\ssuccessfully* .
+   pam password change = yes
+   security = user
+   map to guest = bad user
+   usershare allow guests = yes
 
 [Internal Storage]
-        comment = {NAME} Internal Music Folder
+        comment = Volumio Internal Music Folder
         path = /data/INTERNAL
         read only = no
         guest ok = yes
 
 [USB]
-        comment = {NAME} USB Music Folder
+        comment = Volumio Internal Music Folder
         path = /mnt/USB
         read only = no
         guest ok = yes
 
 [NAS]
-        comment = {NAME} NAS Music Folder
+        comment = Volumio Internal Music Folder
         path = /mnt/NAS
         read only = no
         guest ok = yes
