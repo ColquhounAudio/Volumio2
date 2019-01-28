@@ -70,7 +70,7 @@ fi
 }
 
 function testsound {
-    /usr/bin/amixer -M set -c 0 "Digital" 100%
+    /usr/bin/amixer -M set -c 0 "Digital" 60%
 if [[ "$RTC" == "true" && "$APC" == "true" && "$TIME" == "true" ]]; then
       echo "All tests passed"
 
