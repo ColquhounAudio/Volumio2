@@ -1,5 +1,9 @@
 'use strict';
-
+class dummyIO{
+	constructor() {}
+	write(any){}
+	read(){}
+}
 // 20180601 RMPickering - This is Plugin GPIO-buttons: index.js
 
 var libQ = require('kew');
@@ -11,11 +15,30 @@ var socket = io.connect('http://localhost:3000');
 // 20180615 RMPickering - Child process is no longer used!
 //var runInShell = require('child_process').exec;
 var execSync = require('child_process').execSync;
+var fs=require('fs');
 
 // The source indicator LEDs
-var opticalIndicatorLed = new Gpio(506, 'out');
-var analogIndicatorLed = new Gpio(505, 'out');
-var internalIndicatorLed = new Gpio(504, 'out');
+//
+//
+//
+if (fs.existsSync("/sys/class/gpio/gpio506")) {
+	var opticalIndicatorLed = new Gpio(506, 'out');
+}else{
+	var opticalIndicatorLed = new dummyIO();
+}
+
+if (fs.existsSync("/sys/class/gpio/gpio505")) {
+	var analogIndicatorLed = new Gpio(505, 'out');
+}else{
+	var analogIndicatorLed = new dummyIO();
+}
+
+if (fs.existsSync("/sys/class/gpio/gpio504")) {
+	var internalIndicatorLed = new Gpio(504, 'out');
+}else{
+	var internalIndicatorLed = new dummyIO();
+}
+
 
 var actions = ["playPause", "volumeUp", "volumeDown", "previous", "next", "shutdown"];
 
@@ -212,9 +235,13 @@ GPIOButtons.prototype.createTriggers = function () {
             self.logger.info('GPIO-Buttons: ' + action + ' on pin ' + pin);
             // RMPickering - Supply recommended debounceTimeout of 10 msec for each trigger!
             //            var j = new Gpio(pin, 'in', 'both', { debounceTimeout: 10 });
+	    try{
             var j = new Gpio(pin, 'in', 'both');
             j.watch(self.listener.bind(self, action));
             self.triggers.push(j);
+	    }catch(err){
+            	self.logger.info('Unable to bind ' + action + ' on pin ' + pin);
+	    }
         }
     });
 

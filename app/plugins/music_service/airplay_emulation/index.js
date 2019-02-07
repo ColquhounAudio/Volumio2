@@ -10,16 +10,7 @@ var ip = require('ip');
 var pidof = require('pidof');
 var spawn = require('child_process').spawn;
 var execSync = require('child_process').execSync;
-var Gpio = require('onoff').Gpio;
 var runInShell = require('child_process').exec;
-
-
-//20180628-Emre Ozkan defining the pins for leds and externals toggle switch pins 
-var inputSwitchBit0 = new Gpio(5, 'out');
-var inputSwitchBit1 = new Gpio(6, 'out');
-var opticalIndicatorLed = new Gpio(506, 'out');
-var analogIndicatorLed = new Gpio(505, 'out');
-var internalIndicatorLed = new Gpio(504, 'out');
 
 
 // Define the ControllerSystem class
