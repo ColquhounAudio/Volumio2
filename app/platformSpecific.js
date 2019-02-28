@@ -87,7 +87,7 @@ PlatformSpecific.prototype.startupSound = function () {
     if (startupSound){
 			var hwdev = '--device=plughw:' + outdev + ',0';
 			if (outdev === 'volume'){
-			hwdev = '-D volume';
+			hwdev = '';
 			}
 			exec('/usr/bin/aplay '+hwdev+' /volumio/app/startup.wav', function (error, stdout, stderr) {
 			if (error !== null) {

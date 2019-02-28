@@ -1,19 +1,19 @@
 {
-  "initvol": {
-    "type": "string",
-    "value": "85"
-  },
-  "normalvolume": {
+ "initvol": {
+      "type": "string",
+      "value": "33"
+},
+"normalvolume": {
     "type": "boolean",
     "value": false
   },
-  "shareddevice": {
+    "shareddevice": {
     "type": "boolean",
     "value": true
   },
-  "username": {
-    "type": "string",
-    "value": ""
+    "username": {
+      "type": "string",
+      "value": ""
   },
   "password": {
     "type": "string",
