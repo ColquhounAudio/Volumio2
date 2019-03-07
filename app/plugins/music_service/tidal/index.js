@@ -1029,14 +1029,21 @@ ControllerTidal.prototype.listGenericLevel = function (url,parent,templateRespon
 
                         var albumart;
                         var uuid;
-
-                        if(item.image!==undefined)
-                            albumart='https://resources.tidal.com/images/'+
-                                item.image.replace(/-/g,'/')+ '/'+imageSize+'.jpg';
-                        else if(item.cover!==undefined)
-                            albumart='https://resources.tidal.com/images/'+
-                                item.cover.replace(/-/g,'/')+ '/'+imageSize+'.jpg';
-
+		//	console.log(item);
+			    if(item.image!==undefined)
+			    {
+				    try{
+					    albumart='https://resources.tidal.com/images/'+
+						    item.image.replace(/-/g,'/')+ '/'+imageSize+'.jpg';
+				    }catch(e){}
+			    }
+			    else if(item.cover!==undefined)
+			    {
+				    try{
+					    albumart='https://resources.tidal.com/images/'+
+						    item.cover.replace(/-/g,'/')+ '/'+imageSize+'.jpg';
+				    }catch(e){}
+			    }
                         if(item.uuid!==undefined)
                             uuid=item.uuid;
                         else if(item.id!==undefined)
