@@ -60,16 +60,6 @@
 			"value": "STARTED"
 		}
 	},
-	"youtube": {
-		"enabled": {
-			"type": "boolean",
-			"value": true
-		},
-		"status": {
-			"type": "string",
-			"value": "STARTED"
-		}
-	},
 	"volspotconnect2": {
 		"enabled": {
 			"type": "boolean",

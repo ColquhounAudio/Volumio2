@@ -4,6 +4,15 @@ class dummyIO{
 	write(any){}
 	read(){}
 }
+
+class sleep{
+	usleep(micros){
+		var millis=micros/1000;
+		return new Promise(function (resolve, reject) {
+			setTimeout(function () { resolve(); }, millis);
+		});
+	}
+}
 // 20180601 RMPickering - This is Plugin GPIO-buttons: index.js
 
 var libQ = require('kew');
@@ -16,6 +25,7 @@ var socket = io.connect('http://localhost:3000');
 //var runInShell = require('child_process').exec;
 var execSync = require('child_process').execSync;
 var fs=require('fs');
+
 
 // The source indicator LEDs
 //
@@ -45,12 +55,22 @@ var actions = ["playPause", "volumeUp", "volumeDown", "previous", "next", "shutd
 // RMPickering - These toggle switches to be used to switch the DAC input between Pi, Optical, and RCA Analog - hardcoded to pins 5 & 6 for now! (Assuming the pins being set are using BCM pin numbering rather than physical pin numbers.)
 var inputSwitchBit0 = new Gpio(5, 'out');
 var inputSwitchBit1 = new Gpio(6, 'out');
+var KaraokeSwitch = new Gpio(13, 'low');
+
+var lowBattery = new Gpio(22, 'in', 'both');
+var lowBatteryLEDCheck = new Gpio(17, 'in', 'both');
+var RedLEDGpio = new Gpio(23, 'low');
+var MusicPlus = new Gpio(24, 'low');
+var MusicMinus = new Gpio(25, 'low');
+var MicPlus = new Gpio(5, 'low');
+var MicMinus= new Gpio(12, 'low');
+
+
 // RMPickering - Both switch pins are initialized to zero in a startup routine (outside JavaScript) already!
 
 // 20180524 RMPickering - Hacking the "Next" button to repurpose it as "Source Switch" button. This requires another update to config.json to add the correct GPIO pin, which is 496 (GPA0 on MCP23017). Then add write to GPIO5 and/or GPIO6 to select the correct input.
 var currentSource = 0;
-
-
+var karaoke = 'off';
 // 20180518 RMPickering - Updating onoff to latest version so as to use its improved software debounce. This requires adding a parameter to the button initialization call below!
 // 20180601 RMPickering - Can we also call a command to play whitenoise, and update our state/status?
 
@@ -88,20 +108,31 @@ GPIOButtons.prototype.getConfigurationFiles = function () {
 
 
 GPIOButtons.prototype.onStart = function () {
-    var self = this;
-    var defer = libQ.defer();
+	var self = this;
+	var defer = libQ.defer();
 
-    // 20180629 RMPickering - Moved LED setup earlier in startup process.
-    // 20180606 RMPickering - Setup LED to indicate that the RPi itself is the selected source.
-    internalIndicatorLed.write(1);
+	// 20180629 RMPickering - Moved LED setup earlier in startup process.
+	// 20180606 RMPickering - Setup LED to indicate that the RPi itself is the selected source.
+	internalIndicatorLed.write(1);
 
-    self.createTriggers()
-        .then(function (result) {
-            self.logger.info("GPIO-Buttons started");
-            defer.resolve();
-        });
 
-    return defer.promise;
+	lowBatteryLEDCheck.watch(function (err, value) {
+		var self = this;
+		if (err) {
+			throw err;
+		}
+		RedLEDGpio.write(value);
+		console.log('Low Battery: turning on Warning LED');
+	});
+
+
+	self.createTriggers()
+		.then(function (result) {
+			self.logger.info("GPIO-Buttons started");
+			defer.resolve();
+		});
+
+	return defer.promise;
 };
 
 
@@ -645,3 +676,99 @@ GPIOButtons.prototype.switchOffExtInput = function () {
 
 GPIOButtons.prototype.setVolatileCallback = function () {
 };
+
+// KARAOKE FUNCTIONS
+GPIOButtons.prototype.KaraokeSwitchPress = function(data) {
+	var self=this;
+
+	if (data) {
+		if (data == 'on') {
+			KaraokeSwitch.write(1);
+			console.log('Karaoke Switch has been selected');
+			karaoke = 'on';
+			self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Karaoke Mode ON')
+		} else {
+			KaraokeSwitch.write(0);
+			console.log('Karaoke Switch has been deselected');
+			karaoke = 'off';
+			self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Karaoke Mode ON')
+		}
+	} else {
+		KaraokeSwitch.read(function (err, value) {
+			if (err) {
+				throw err;
+			} if (value == 0) {
+				KaraokeSwitch.write(1);
+				console.log('Karaoke Switch has been selected');
+				karaoke = 'on';
+			} else {
+				KaraokeSwitch.write(0);
+				console.log('Karaoke Switch has been deselected');
+				karaoke = 'off';
+			}
+		});
+	}
+
+	var promise = {
+		message : "pushKaraokeStatus",
+		payload: karaoke
+	};
+	console.log(promise);
+
+	return promise
+};
+
+GPIOButtons.prototype.getKaraokeStatus = function() {
+	var self=this;
+	var promise = {
+		message : "pushKaraokeStatus",
+		payload: karaoke
+	};
+
+	return promise
+};
+
+
+GPIOButtons.prototype.MusicPlusPress = function() {
+	var self = this;
+
+	self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Music +')
+	MusicPlus.writeSync(1);
+	setTimeout(function(){
+		MusicPlus.writeSync(0);
+	},50);
+};
+
+GPIOButtons.prototype.MusicMinusPress = function() {
+	var self = this;
+
+	self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Music -')
+	MusicMinus.writeSync(1);
+	setTimeout(function(){
+		MusicMinus.writeSync(0);
+	},50);
+};
+
+
+GPIOButtons.prototype.MicPlusPress = function() {
+	var self = this;
+
+	self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Microphone +')
+	MicPlus.writeSync(1);
+	setTimeout(function(){
+		MicPlus.writeSync(0);
+	},50);
+
+};
+
+GPIOButtons.prototype.MicMinusPress = function() {
+	var self = this;
+
+	self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Microphone -')
+	MicMinus.writeSync(1);
+	setTimeout(function(){
+		MicMinus.writeSync(0);
+	},50);
+};
+
+
