@@ -90,6 +90,40 @@
 
     },
     {
+      "id":"section_experimental",
+      "type": "section",
+      "label": "TRANSLATE.SYSTEM.SYSTEM_EXPERIMENTAL",
+      "icon": "fa-flask",
+      "content": [
+        {
+          "id":"airplay1",
+          "element": "button",
+          "label": "TRANSLATE.SYSTEM.ENABLE_AIRPLAY1",
+          "description": "TRANSLATE.SYSTEM.ENABLE_AIRPLAY1_DESCR",
+          "onClick": {"type":"emit", "message":"enableAirplay1", "data":"enable-airplay-1"}
+        },
+        {
+          "id":"airplay2",
+          "element": "button",
+          "label": "TRANSLATE.SYSTEM.ENABLE_AIRPLAY2",
+          "description": "TRANSLATE.SYSTEM.ENABLE_AIRPLAY2_DESCR",
+          "onClick": {"type":"emit", "message":"enableAirplay2", "data":"enable-airplay-2"}
+        },
+        {
+          "id":"airplay_support",
+          "element": "button",
+          "label": "TRANSLATE.SYSTEM.ENABLE_AIRSUPPORT",
+          "description": "TRANSLATE.SYSTEM.ENABLE_AIRSUPPORT_DESCR",
+          "onClick": {"type":"emit", "message":"enableSupport", "data":"enable-support"}
+        }
+
+
+
+      ]
+
+    },
+
+    {
       "id":"section_install",
       "type": "section",
       "hidden": true,
