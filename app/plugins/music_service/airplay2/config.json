@@ -1,0 +1,7 @@
+{
+  "statusFile":{"value":"/tmp/status","type":"string"},
+  "songFile":{"value":"/tmp/song","type":"string"},
+  "progressFile":{"value":"/tmp/progress","type":"string"},
+  "volumeFile":{"value":"/tmp/volume","type":"string"},
+  "busFile":{"value":"/tmp/bus","type":"string"}
+}

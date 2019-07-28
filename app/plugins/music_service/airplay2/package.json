@@ -1,0 +1,14 @@
+{
+  "name": "airplay2",
+  "version": "1.0.0",
+  "description": "Airplay 2 Interface for Volumio 2",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Axiom",
+  "license": "Private",
+  "volumio_info":{
+    "plugin_type": "music_service"
+  }
+}
