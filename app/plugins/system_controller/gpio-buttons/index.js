@@ -51,6 +51,7 @@ if (fs.existsSync("/sys/class/gpio/gpio504")) {
 
 
 var actions = ["playPause", "volumeUp", "volumeDown", "previous", "next", "shutdown"];
+var pins = [];
 
 // RMPickering - These toggle switches to be used to switch the DAC input between Pi, Optical, and RCA Analog - hardcoded to pins 5 & 6 for now! (Assuming the pins being set are using BCM pin numbering rather than physical pin numbers.)
 var inputSwitchBit0 = new Gpio(5, 'out');
@@ -267,9 +268,10 @@ GPIOButtons.prototype.createTriggers = function () {
             // RMPickering - Supply recommended debounceTimeout of 10 msec for each trigger!
             //            var j = new Gpio(pin, 'in', 'both', { debounceTimeout: 10 });
 	    try{
-            var j = new Gpio(pin, 'in', 'both');
-            j.watch(self.listener.bind(self, action));
-            self.triggers.push(j);
+		    
+            pins[action] = new Gpio(pin, 'in', 'both');
+            pins[action].watch(self.listener.bind(self, action));
+            self.triggers.push(pins[action]);
 	    }catch(err){
             	self.logger.info('Unable to bind ' + action + ' on pin ' + pin);
 	    }
@@ -615,7 +617,13 @@ GPIOButtons.prototype.previous = function () {
 
 //Volume up
 GPIOButtons.prototype.volumeUp = function () {
-    //this.logger.info('GPIO-Buttons: Vol+ button pressed');
+    this.logger.info('GPIO-Buttons: Vol+ button pressed');
+	if(pins["volumeDown"].readSync()==0)
+	{
+    		this.logger.info('GPIO-Buttons: BOTH BUTTONS ARE PRESSED');
+
+    		execSync('ip route get 8.8.8.8 | sed -n "/src/{s/.*src *\\([^ ]*\\).*/\\1/p;q}" | sed -e "s/\\([0-9]\\)/\\1 /g"| espeak-ng --punct' );
+	}
     socket.emit('volume', '+');
 };
 
