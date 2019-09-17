@@ -49,6 +49,13 @@ if (fs.existsSync("/sys/class/gpio/gpio504")) {
 	var internalIndicatorLed = new dummyIO();
 }
 
+if (fs.existsSync("/sys/class/gpio/gpio508")) {
+	var RedLEDGpio = new Gpio(508, 'low');
+}else{
+	var RedLEDGpio = new Gpio(23, 'low');
+}
+
+
 
 var actions = ["playPause", "volumeUp", "volumeDown", "previous", "next", "shutdown"];
 var pins = [];
@@ -60,7 +67,6 @@ var KaraokeSwitch = new Gpio(13, 'low');
 
 var lowBattery = new Gpio(22, 'in', 'both');
 var lowBatteryLEDCheck = new Gpio(17, 'in', 'both');
-var RedLEDGpio = new Gpio(23, 'low');
 var MusicPlus = new Gpio(24, 'low');
 var MusicMinus = new Gpio(25, 'low');
 var MicPlus = new Gpio(5, 'low');
@@ -117,13 +123,20 @@ GPIOButtons.prototype.onStart = function () {
 	internalIndicatorLed.write(1);
 
 
+        self.logger.info("Registering battery monitor");
 	lowBatteryLEDCheck.watch(function (err, value) {
 		var self = this;
 		if (err) {
 			throw err;
 		}
-		RedLEDGpio.write(value);
-		console.log('Low Battery: turning on Warning LED');
+		if(value==0)
+		{
+			RedLEDGpio.writeSync(0);
+			console.log('Low Battery: turning off Warning LED');
+		}else{
+			RedLEDGpio.writeSync(1);
+			console.log('Low Battery: turning on Warning LED');
+		}
 	});
 
 
