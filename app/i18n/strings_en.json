@@ -232,7 +232,8 @@
     "ALARM":"Alarm",
     "SLEEP":"Sleep",
     "CREDITS":"Credits",
-    "SHUTDOWN":"Shutdown"
+    "SHUTDOWN":"Shutdown",
+    "IR":"IR Remote"
   },
   "ALARM":{
     "ALARM_CLOCK_TITLE":"Alarm Clock",
@@ -296,7 +297,13 @@
     "ENABLE_AIRPLAY2":"Enable Airplay V2 (Beta)",
     "ENABLE_AIRPLAY2_DESC":"Enable Airplay Beta Version of Airplay V2",
     "ENABLE_AIRSUPPORT":"Enable Air Support",
-    "ENABLE_AIRPLAY2_DESC":"Enable Air Support for remote assistance"
+    "ENABLE_AIRPLAY2_DESC":"Enable Air Support for remote assistance",
+    "RECORD_VOL_PLUS":"Record Vol+",
+    "RECORD_VOL_PLUS_DESCR":"Record Vol+ IR Signal",
+    "RECORD_VOL_MINUS":"Record Vol-",
+    "RECORD_VOL_MINUS_DESCR":"Record Vol- IR Signal"
+
+
   },
   "WEBRADIO":{
     "MY_WEB_RADIOS":"My Web Radios",

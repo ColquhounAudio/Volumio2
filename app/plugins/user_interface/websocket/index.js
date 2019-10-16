@@ -907,7 +907,6 @@ function InterfaceWebUI(context) {
 
 
 
-
 		connWebSocket.on('factoryReset', function () {
 			var selfConnWebSocket = this;
 			self.logger.info("Command Factory Reset Received");
