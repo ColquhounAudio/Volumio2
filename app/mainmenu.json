@@ -9,6 +9,7 @@
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.SLEEP", "params": {"modalName": "modal-sleep"}},
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.SHUTDOWN", "params": {"modalName": "modal-power-off"}},
     {"id": "modal", "name": "KARAOKE", "params": {"modalName": "modal-karaoke"}},
+    {"id": "IR", "name": "TRANSLATE.MAIN_MENU.IR", "state": "volumio.plugin", "params": {"pluginName": "accessory/ir_controller"}},
     {"id": "link", "name": "Axiom Shop", "params": {"url": "https://www.axiomaudio.com/products"}}
   ]
 }

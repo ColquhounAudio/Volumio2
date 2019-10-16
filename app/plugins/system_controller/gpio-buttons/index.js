@@ -55,6 +55,18 @@ if (fs.existsSync("/sys/class/gpio/gpio508")) {
 	var RedLEDGpio = new Gpio(23, 'low');
 }
 
+if (fs.existsSync("/dev/lirc0")) {
+	var MusicPlus = new dummyIO();
+	var MusicMinus = new dummyIO();
+	var MicPlus = new dummyIO();
+	var MicMinus= new dummyIO();
+}else{
+	var MusicPlus = new Gpio(24, 'low');
+	var MusicMinus = new Gpio(25, 'low');
+	var MicPlus = new Gpio(5, 'low');
+	var MicMinus= new Gpio(12, 'low');
+}
+
 
 
 var actions = ["playPause", "volumeUp", "volumeDown", "previous", "next", "shutdown"];
@@ -67,11 +79,6 @@ var KaraokeSwitch = new Gpio(13, 'low');
 
 var lowBattery = new Gpio(22, 'in', 'both');
 var lowBatteryLEDCheck = new Gpio(17, 'in', 'both');
-var MusicPlus = new Gpio(24, 'low');
-var MusicMinus = new Gpio(25, 'low');
-var MicPlus = new Gpio(5, 'low');
-var MicMinus= new Gpio(12, 'low');
-
 
 // RMPickering - Both switch pins are initialized to zero in a startup routine (outside JavaScript) already!
 

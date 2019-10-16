@@ -317,5 +317,15 @@
       }
     }
  
+  },
+  "accessory": {
+    "ir_controller": {
+      "enabled": {
+        "type": "boolean",
+        "value": true
+      }
+    }
   }
+
+
 }
