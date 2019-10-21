@@ -296,6 +296,47 @@ function interfaceApi(context) {
                             res.json({'time':timeStart, 'response':req.query.cmd + " Success"});
                         });
                 }
+
+                else if(req.query.cmd == "setAnalog"){
+                    var timeStart = Date.now();
+                    self.logStart('Client requests Analog In')
+                        .then(function () {
+                            self.commandRouter.executeOnPlugin('system_controller', 'gpio-buttons', 'setAnalog', '');
+                        })
+                        .fail(self.pushError.bind(self))
+                        .done(function () {
+                            res.json({'time':timeStart, 'response':req.query.cmd + " Success"});
+                        });
+                }
+                else if(req.query.cmd == "setOptical"){
+                    var timeStart = Date.now();
+                    self.logStart('Client requests Optical In')
+                        .then(function () {
+                            self.commandRouter.executeOnPlugin('system_controller', 'gpio-buttons', 'setOptical', '');
+                        })
+                        .fail(self.pushError.bind(self))
+                        .done(function () {
+                            res.json({'time':timeStart, 'response':req.query.cmd + " Success"});
+                        });
+                }
+
+                else if(req.query.cmd == "setInternal"){
+                    var timeStart = Date.now();
+                    self.logStart('Client requests Internal audio')
+                        .then(function () {
+                            self.commandRouter.executeOnPlugin('system_controller', 'gpio-buttons', 'setInternal', '');
+                        })
+                        .fail(self.pushError.bind(self))
+                        .done(function () {
+                            res.json({'time':timeStart, 'response':req.query.cmd + " Success"});
+                        });
+                }
+
+
+
+
+
+
                 else{
                     res.json({'Error': "command not recognized"});
                 }
