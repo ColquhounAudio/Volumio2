@@ -870,7 +870,7 @@ ControllerMultiroom.prototype.snapServerStart = function() {
     var self = this;
     log("snap server start");
     var defer = libQ.defer();
-    var commandjson = '{"action":"start","parameters":"-d -b 3000 -c ogg --pipeReadBuffer 200"}';
+    var commandjson = '{"action":"start","parameters":"-d -b 3000 -c flac --pipeReadBuffer 200"}';
     log("SNAPSERVERTART");
     fs.writeFile('/tmp/snapserver', commandjson, function(err) {
         if (err) {
