@@ -4,7 +4,7 @@
     {"id": "appearance", "name": "TRANSLATE.MAIN_MENU.APPEARANCE", "state": "volumio.plugin","params": {"pluginName": "miscellanea/appearance"}},
     {"id": "network", "name": "TRANSLATE.MAIN_MENU.NETWORK", "state": "volumio.plugin","params": {"pluginName": "system_controller/network"}},
     {"id": "system", "name": "TRANSLATE.MAIN_MENU.SYSTEM", "state": "volumio.plugin", "params": {"pluginName": "system_controller/system"}},
-    {"id": "plugin-manager", "name": "TRANSLATE.MAIN_MENU.PLUGINS", "state":"volumio.plugin-manager"},
+    {"id": "Volume", "name": "TRANSLATE.MAIN_MENU.VOLUME", "state": "volumio.plugin", "params": {"pluginName": "audio_interface/alsa_controller"}},
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.ALARM", "params": {"modalName": "modal-alarm-clock"}},
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.SLEEP", "params": {"modalName": "modal-sleep"}},
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.SHUTDOWN", "params": {"modalName": "modal-power-off"}},
