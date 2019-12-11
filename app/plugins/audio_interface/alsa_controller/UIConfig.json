@@ -4,6 +4,7 @@
   "sections": [
     {
       "id": "alsa_options",
+      "hidden": true,
       "element": "section",
       "label": "TRANSLATE.PLAYBACK_OPTIONS.AUDIO_OUTPUT",
       "icon": "fa-volume-up",
@@ -65,6 +66,7 @@
 	{
 	  "id": "dac_dsp_options",
 	  "element": "section",
+      	  "hidden": true,
 	  "label": "TRANSLATE.PLAYBACK_OPTIONS.ADVANCED_DAC_DSP_OPTIONS",
 	  "doc":"TRANSLATE.PLAYBACK_OPTIONS.ADVANCED_DAC_DSP_OPTIONS_DOC",
 	  "icon": "fa-microchip",
@@ -86,6 +88,7 @@
     {
       "id": "playback_options",
       "element": "section",
+      "hidden": true,
       "label": "TRANSLATE.PLAYBACK_OPTIONS.PLAYBACK_OPTIONS_TITLE",
       "icon": "fa-sliders",
       "onSave": {"type":"controller", "endpoint":"music_service/mpd", "method":"savePlaybackOptions"},
@@ -238,6 +241,7 @@
       "content": [
         {
           "id": "mixer_type",
+          "hidden": true,
           "element": "select",
           "doc" : "TRANSLATE.PLAYBACK_OPTIONS.MIXER_TYPE_DOC",
           "label": "TRANSLATE.PLAYBACK_OPTIONS.MIXER_TYPE",
@@ -252,6 +256,7 @@
         },
         {
           "id": "mixer",
+          "hidden": true,
           "element": "select",
           "doc" : "TRANSLATE.PLAYBACK_OPTIONS.MIXER_CONTROL_NAME_DOC",
           "label": "TRANSLATE.PLAYBACK_OPTIONS.MIXER_CONTROL_NAME",
@@ -436,6 +441,7 @@
         },
         {
           "id": "mpdvolume",
+          "hidden": true,
           "element": "switch",
           "doc":"TRANSLATE.PLAYBACK_OPTIONS.MPD_VOLUME_DOC",
           "label": "TRANSLATE.PLAYBACK_OPTIONS.MPD_VOLUME",
@@ -446,6 +452,7 @@
     },
 	{
 	  "id": "advanced_twaaks",
+          "hidden": true,
 	  "element": "section",	
 	  "label": "TRANSLATE.PLAYBACK_OPTIONS.AUDIO_RESAMPLING",
 	  "icon": "fa-tachometer",

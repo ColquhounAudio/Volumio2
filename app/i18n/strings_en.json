@@ -233,7 +233,8 @@
     "SLEEP":"Sleep",
     "CREDITS":"Credits",
     "SHUTDOWN":"Shutdown",
-    "IR":"IR Remote"
+    "IR":"IR Remote",
+    "VOLUME":"Volume"
   },
   "ALARM":{
     "ALARM_CLOCK_TITLE":"Alarm Clock",
