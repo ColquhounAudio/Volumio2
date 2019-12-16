@@ -8,6 +8,7 @@
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.ALARM", "params": {"modalName": "modal-alarm-clock"}},
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.SLEEP", "params": {"modalName": "modal-sleep"}},
     {"id": "modal", "name": "TRANSLATE.MAIN_MENU.SHUTDOWN", "params": {"modalName": "modal-power-off"}},
+    {"id": "IR", "name": "TRANSLATE.MAIN_MENU.IR", "state": "volumio.plugin", "params": {"pluginName": "accessory/ir_controller"}},
     {"id": "link", "name": "BRYSTON STORE", "params": {"url": "http://www.bryston.com/"}}
   ]
 }
