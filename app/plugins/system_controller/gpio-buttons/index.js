@@ -25,7 +25,9 @@ var socket = io.connect('http://localhost:3000');
 //var runInShell = require('child_process').exec;
 var execSync = require('child_process').execSync;
 var fs=require('fs');
-
+var legacyKaraoke=false;
+var karaokeLevels = { musicLevel : 128 , micLevel : 128 , echoLevel : 128 , KaraokeStatus :   1 , musicStep :   8 , micStep :   8 , echoStep :   8 };
+var karaokeReadTimer = undefined;
 
 // The source indicator LEDs
 //
@@ -108,6 +110,20 @@ GPIOButtons.prototype.onVolumioStart = function () {
     var configFile = this.commandRouter.pluginManager.getConfigurationFile(this.context, 'config.json');
     this.config = new (require('v-conf'))();
     this.config.loadFile(configFile);
+
+
+	
+    try {
+    	var clilevels = execSync("/usr/local/bin/karaokectl read");
+	karaokeLevels = JSON.parse(clilevels);
+	legacyKaraoke=false;
+
+    }catch(ex){
+	legacyKaraoke=true;
+    	self.logger.info("Unable to read levels. Using legacy Karaoke mode");
+    }
+
+	
 
     self.logger.info("GPIO-Buttons initialized");
 
@@ -705,36 +721,95 @@ GPIOButtons.prototype.switchOffExtInput = function () {
 GPIOButtons.prototype.setVolatileCallback = function () {
 };
 
+GPIOButtons.prototype.getKaraokeLevels = function (){
+	var self=this;
+	console.log('Im here');
+	    try {
+		console.log('now here');
+		var clilevels = execSync("/usr/local/bin/karaokectl read");
+		karaokeLevels = JSON.parse(clilevels);
+		console.log(karaokeLevels.musicLevel);
+	    }catch(ex){
+	    }
+};
+
+
+GPIOButtons.prototype.writeKaraokeCommand = function (command){
+	var self=this;
+	    try {
+		var output = execSync("/usr/local/bin/karaokectl write "+command);
+		clearTimeout(karaokeReadTimer);
+		karaokeReadTimer=setTimeout(this.getKaraokeLevels,300);
+	    }catch(ex){
+	    }
+};
+
 // KARAOKE FUNCTIONS
 GPIOButtons.prototype.KaraokeSwitchPress = function(data) {
 	var self=this;
 
-	if (data) {
-		if (data == 'on') {
-			KaraokeSwitch.write(1);
-			console.log('Karaoke Switch has been selected');
-			karaoke = 'on';
-			self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Karaoke Mode ON')
-		} else {
-			KaraokeSwitch.write(0);
-			console.log('Karaoke Switch has been deselected');
-			karaoke = 'off';
-			self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Karaoke Mode ON')
-		}
-	} else {
-		KaraokeSwitch.read(function (err, value) {
-			if (err) {
-				throw err;
-			} if (value == 0) {
+	if(legacyKaraoke)
+	{
+		console.log('IN LEGACY MODE');
+
+		if (data) {
+			if (data == 'on') {
 				KaraokeSwitch.write(1);
 				console.log('Karaoke Switch has been selected');
 				karaoke = 'on';
+				self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Karaoke Mode ON')
 			} else {
 				KaraokeSwitch.write(0);
 				console.log('Karaoke Switch has been deselected');
 				karaoke = 'off';
+				self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Karaoke Mode ON')
 			}
-		});
+		} else {
+			KaraokeSwitch.read(function (err, value) {
+				if (err) {
+					throw err;
+				} if (value == 0) {
+					KaraokeSwitch.write(1);
+					console.log('Karaoke Switch has been selected');
+					karaoke = 'on';
+				} else {
+					KaraokeSwitch.write(0);
+					console.log('Karaoke Switch has been deselected');
+					karaoke = 'off';
+				}
+			});
+		}
+	}else{
+		console.log('IN AVR MODE');
+		if (data) {
+			if (data == 'on') {
+    				this.writeKaraokeCommand("SKT001");
+				console.log('Karaoke Switch has been selected');
+				karaoke = 'on';
+				karaokeLevels.KaraokeStatus=1;
+				self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Karaoke Mode ON')
+			} else {
+    				this.writeKaraokeCommand("SKT000");
+				console.log('Karaoke Switch has been deselected');
+				karaoke = 'off';
+				karaokeLevels.KaraokeStatus=0;
+				self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Karaoke Mode ON')
+			}
+		} else {
+			if (karaokeLevels.KaraokeStatus == 0) {
+				this.writeKaraokeCommand("SKT001");
+				console.log('Karaoke Switch has been selected');
+				karaoke = 'on';
+				karaokeLevels.KaraokeStatus=1;
+			} else {
+				this.writeKaraokeCommand("SKT000");
+				console.log('Karaoke Switch has been deselected');
+				karaoke = 'off';
+				karaokeLevels.KaraokeStatus=0;
+			}
+		}
+
+
 	}
 
 	var promise = {
@@ -760,43 +835,74 @@ GPIOButtons.prototype.getKaraokeStatus = function() {
 GPIOButtons.prototype.MusicPlusPress = function() {
 	var self = this;
 
-	self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Music +')
-	MusicPlus.writeSync(1);
-	setTimeout(function(){
-		MusicPlus.writeSync(0);
-	},50);
+	if(legacyKaraoke)
+	{
+		self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Music +')
+		MusicPlus.writeSync(1);
+		setTimeout(function(){
+			MusicPlus.writeSync(0);
+		},50);
+	}else{
+		this.writeKaraokeCommand("PMP000");
+		this.getKaraokeLevels();		
+
+	}
 };
 
 GPIOButtons.prototype.MusicMinusPress = function() {
 	var self = this;
 
-	self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Music -')
-	MusicMinus.writeSync(1);
-	setTimeout(function(){
-		MusicMinus.writeSync(0);
-	},50);
+	if(legacyKaraoke)
+	{
+		self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Music -')
+		MusicMinus.writeSync(1);
+		setTimeout(function(){
+			MusicMinus.writeSync(0);
+		},50);
+	}else{
+		this.writeKaraokeCommand("PMM000");
+		this.getKaraokeLevels();		
+
+	}
+
 };
 
 
 GPIOButtons.prototype.MicPlusPress = function() {
 	var self = this;
 
-	self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Microphone +')
-	MicPlus.writeSync(1);
-	setTimeout(function(){
-		MicPlus.writeSync(0);
-	},50);
+	if(legacyKaraoke)
+	{
+		self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Microphone +')
+		MicPlus.writeSync(1);
+		setTimeout(function(){
+			MicPlus.writeSync(0);
+		},50);
+	}else{
+		this.writeKaraokeCommand("PIP000");
+		this.getKaraokeLevels();		
+
+	}
+
 
 };
 
 GPIOButtons.prototype.MicMinusPress = function() {
 	var self = this;
 
-	self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Microphone -')
-	MicMinus.writeSync(1);
-	setTimeout(function(){
-		MicMinus.writeSync(0);
-	},50);
+	if(legacyKaraoke)
+	{
+		self.commandRouter.broadcastToastMessage('info', 'Karaoke', 'Microphone -')
+		MicMinus.writeSync(1);
+		setTimeout(function(){
+			MicMinus.writeSync(0);
+		},50);
+	}else{
+		this.writeKaraokeCommand("PIM000");
+		this.getKaraokeLevels();		
+
+	}
+
 };
 
 
