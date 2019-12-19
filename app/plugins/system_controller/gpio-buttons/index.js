@@ -25,8 +25,8 @@ var socket = io.connect('http://localhost:3000');
 //var runInShell = require('child_process').exec;
 var execSync = require('child_process').execSync;
 var fs=require('fs');
-var legacyKaraoke=false;
-var karaokeLevels = { musicLevel : 128 , micLevel : 128 , echoLevel : 128 , KaraokeStatus :   1 , musicStep :   8 , micStep :   8 , echoStep :   8 };
+var legacyKaraoke=true;
+var karaokeLevels = { musicLevel : 128 , micLevel : 128 , echoLevel : 128 , KaraokeStatus :   1 , musicStep :   8 , micStep :   8 , echoStep :   8, legacy: true };
 var karaokeReadTimer = undefined;
 
 // The source indicator LEDs
@@ -721,14 +721,18 @@ GPIOButtons.prototype.switchOffExtInput = function () {
 GPIOButtons.prototype.setVolatileCallback = function () {
 };
 
-GPIOButtons.prototype.getKaraokeLevels = function (){
+GPIOButtons.prototype.pullKaraokeLevels = function (){
 	var self=this;
-	console.log('Im here');
 	    try {
-		console.log('now here');
 		var clilevels = execSync("/usr/local/bin/karaokectl read");
 		karaokeLevels = JSON.parse(clilevels);
 		console.log(karaokeLevels.musicLevel);
+		socket.emit('KaraokeLevels',karaokeLevels);
+		var oMessaggio = {	
+			msg: "pushKaraokeLevels",
+			value: karaokeLevels
+		};
+            	self.commandRouter.executeOnPlugin('user_interface', 'websocket', 'broadcastMessage', oMessaggio);
 	    }catch(ex){
 	    }
 };
@@ -739,7 +743,7 @@ GPIOButtons.prototype.writeKaraokeCommand = function (command){
 	    try {
 		var output = execSync("/usr/local/bin/karaokectl write "+command);
 		clearTimeout(karaokeReadTimer);
-		karaokeReadTimer=setTimeout(this.getKaraokeLevels,300);
+		karaokeReadTimer=setTimeout(this.pullKaraokeLevels,300);
 	    }catch(ex){
 	    }
 };
@@ -830,6 +834,16 @@ GPIOButtons.prototype.getKaraokeStatus = function() {
 
 	return promise
 };
+GPIOButtons.prototype.getKaraokeLevels = function() {
+	var self=this;
+	var promise = {
+		message : "pushKaraokeLevels",
+		payload: karaokeLevels
+	};
+
+	return promise
+};
+
 
 
 GPIOButtons.prototype.MusicPlusPress = function() {
@@ -844,7 +858,7 @@ GPIOButtons.prototype.MusicPlusPress = function() {
 		},50);
 	}else{
 		this.writeKaraokeCommand("PMP000");
-		this.getKaraokeLevels();		
+		this.pullKaraokeLevels();		
 
 	}
 };
@@ -861,7 +875,7 @@ GPIOButtons.prototype.MusicMinusPress = function() {
 		},50);
 	}else{
 		this.writeKaraokeCommand("PMM000");
-		this.getKaraokeLevels();		
+		this.pullKaraokeLevels();		
 
 	}
 
@@ -880,7 +894,7 @@ GPIOButtons.prototype.MicPlusPress = function() {
 		},50);
 	}else{
 		this.writeKaraokeCommand("PIP000");
-		this.getKaraokeLevels();		
+		this.pullKaraokeLevels();		
 
 	}
 
@@ -899,10 +913,74 @@ GPIOButtons.prototype.MicMinusPress = function() {
 		},50);
 	}else{
 		this.writeKaraokeCommand("PIM000");
-		this.getKaraokeLevels();		
+		this.pullKaraokeLevels();		
 
 	}
 
 };
+
+GPIOButtons.prototype.EchoPlusPress = function() {
+	var self = this;
+
+	if(legacyKaraoke)
+	{
+	}else{
+		this.writeKaraokeCommand("PEP000");
+		this.pullKaraokeLevels();		
+
+	}
+
+
+};
+
+GPIOButtons.prototype.EchoMinusPress = function() {
+	var self = this;
+
+	if(legacyKaraoke)
+	{
+	}else{
+		this.writeKaraokeCommand("PEM000");
+		this.pullKaraokeLevels();		
+
+	}
+
+};
+
+GPIOButtons.prototype.MusicLevelChange = function(data) {
+	var self = this;
+
+	if(!legacyKaraoke)
+	{
+		this.writeKaraokeCommand("SML"+String(data).padStart(3,'0'));
+		this.pullKaraokeLevels();		
+
+	}
+
+};
+
+GPIOButtons.prototype.MicLevelChange = function(data) {
+	var self = this;
+
+	if(!legacyKaraoke)
+	{
+		this.writeKaraokeCommand("SIL"+String(data).padStart(3,'0'));
+		this.pullKaraokeLevels();		
+
+	}
+
+};
+
+GPIOButtons.prototype.EchoLevelChange = function(data) {
+	var self = this;
+
+	if(!legacyKaraoke)
+	{
+		this.writeKaraokeCommand("SEL"+String(data).padStart(3,'0'));
+		this.pullKaraokeLevels();		
+
+	}
+
+};
+
 
 
