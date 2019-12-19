@@ -12,6 +12,12 @@ echo "Set 4 to output"
 gpio -g mode 4 out
 echo "Set 4 to 0"
 gpio -g write 4 0
+
+gpio -g mode 5 out
+gpio -g write 5 0
+gpio -g mode 6 out
+gpio -g write 6 0
+
 gpio readall
 echo "Save and lock fs"
 #sync

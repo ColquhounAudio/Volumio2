@@ -28,6 +28,7 @@ var fs=require('fs');
 var legacyKaraoke=true;
 var karaokeLevels = { musicLevel : 128 , micLevel : 128 , echoLevel : 128 , KaraokeStatus :   1 , musicStep :   8 , micStep :   8 , echoStep :   8, legacy: true };
 var karaokeReadTimer = undefined;
+var karaokeReadInterval = undefined;
 
 // The source indicator LEDs
 //
@@ -117,7 +118,8 @@ GPIOButtons.prototype.onVolumioStart = function () {
     	var clilevels = execSync("/usr/local/bin/karaokectl read");
 	karaokeLevels = JSON.parse(clilevels);
 	legacyKaraoke=false;
-
+	karaokeReadTimer=setTimeout(function() { this.pullKaraokeLevels() }.bind(this),300);
+	karaokeReadInterval=setInterval(function() { this.pullKaraokeLevels() }.bind(this),5000);
     }catch(ex){
 	legacyKaraoke=true;
     	self.logger.info("Unable to read levels. Using legacy Karaoke mode");
@@ -726,14 +728,13 @@ GPIOButtons.prototype.pullKaraokeLevels = function (){
 	    try {
 		var clilevels = execSync("/usr/local/bin/karaokectl read");
 		karaokeLevels = JSON.parse(clilevels);
-		console.log(karaokeLevels.musicLevel);
-		socket.emit('KaraokeLevels',karaokeLevels);
 		var oMessaggio = {	
 			msg: "pushKaraokeLevels",
 			value: karaokeLevels
 		};
             	self.commandRouter.executeOnPlugin('user_interface', 'websocket', 'broadcastMessage', oMessaggio);
 	    }catch(ex){
+    		console.log("Error in pulling levels :"+ex);
 	    }
 };
 
@@ -743,7 +744,6 @@ GPIOButtons.prototype.writeKaraokeCommand = function (command){
 	    try {
 		var output = execSync("/usr/local/bin/karaokectl write "+command);
 		clearTimeout(karaokeReadTimer);
-		karaokeReadTimer=setTimeout(this.pullKaraokeLevels,300);
 	    }catch(ex){
 	    }
 };
