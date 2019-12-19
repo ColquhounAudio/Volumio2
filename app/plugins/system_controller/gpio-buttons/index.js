@@ -124,6 +124,74 @@ GPIOButtons.prototype.onVolumioStart = function () {
     }catch(ex){
 	legacyKaraoke=true;
     	self.logger.info("Unable to read levels. Using legacy Karaoke mode");
+	    MusicPlus.writeSync(1);
+	    setTimeout(function(){
+		    MusicPlus.writeSync(0);
+		    setTimeout(function(){
+			    MusicPlus.writeSync(1);
+			    setTimeout(function(){
+				    MusicPlus.writeSync(0);
+				    setTimeout(function(){
+					    MusicPlus.writeSync(1);
+					    setTimeout(function(){
+						    MusicPlus.writeSync(0);
+						    setTimeout(function(){
+							    MusicPlus.writeSync(1);
+							    setTimeout(function(){
+								    MusicPlus.writeSync(0);
+								    setTimeout(function(){
+									    MusicPlus.writeSync(1);
+									    setTimeout(function(){
+										    MusicPlus.writeSync(0);
+									    },50);
+
+								    },50);
+
+							    },50);
+
+						    },50);
+					    },50);
+
+				    },50);
+			    },50);
+
+		    },50);
+	    },50);
+	    MicPlus.writeSync(1);
+	    setTimeout(function(){
+		    MicPlus.writeSync(0);
+		    setTimeout(function(){
+			    MicPlus.writeSync(1);
+			    setTimeout(function(){
+				    MicPlus.writeSync(0);
+				    setTimeout(function(){
+					    MicPlus.writeSync(1);
+					    setTimeout(function(){
+						    MicPlus.writeSync(0);
+						    setTimeout(function(){
+							    MicPlus.writeSync(1);
+							    setTimeout(function(){
+								    MicPlus.writeSync(0);
+								    setTimeout(function(){
+									    MicPlus.writeSync(1);
+									    setTimeout(function(){
+										    MicPlus.writeSync(0);
+									    },50);
+
+								    },50);
+
+							    },50);
+
+						    },50);
+					    },50);
+
+				    },50);
+			    },50);
+
+		    },50);
+	    },50);
+
+
     }
 
 	
