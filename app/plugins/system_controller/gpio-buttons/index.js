@@ -27,7 +27,7 @@ var socket = io.connect('http://localhost:3000');
 var execSync = require('child_process').execSync;
 var fs=require('fs');
 var legacyKaraoke=true;
-var karaokeLevels = { musicLevel : 128 , micLevel : 128 , echoLevel : 128 , KaraokeStatus :   1 , musicStep :   8 , micStep :   8 , echoStep :   8, legacy: true };
+var karaokeLevels = { musicLevel : 128 , micLevel : 128 , echoLevel : 128 , KaraokeStatus :   0 , musicStep :   8 , micStep :   8 , echoStep :   8, legacy: true };
 var karaokeReadTimer = undefined;
 var karaokeReadInterval = undefined;
 
