@@ -528,10 +528,25 @@ ControllerVolspotconnect.prototype.createConfigFile = function () {
       fs.writeFile(path.join(__dirname, 'startconnect.sh'), conf, 'utf8', function (err) {
         if (err) { defer.reject(new Error(err)); } else defer.resolve();
       });
+
+	    fs.readFile(path.join(__dirname, '/volspotconnect2mr.tmpl'), 'utf8', function (err, data) {
+	      /* eslint-disable no-template-curly-in-string */
+	      let conf = data.replace('${shared}', shared)
+		.replace('${devicename}', devicename)
+		.replace('${initvol}', initvol);
+		// .replace('${initvol}', self.config.get('initvol'));
+		/* eslint-enable no-template-curly-in-string */
+	      fs.writeFile(path.join(__dirname, 'startconnectmr.sh'), conf, 'utf8', function (err) {
+	      });
+	    });
+
     });
+
+
   } catch (err) {
     logger.error(err);
   }
+
 ///  throw new Error('your die message here');
   return defer.promise;
 };

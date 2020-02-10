@@ -1,0 +1,6 @@
+#!/bin/sh
+cd /volumio/app/plugins/music_service/volspotconnect2
+./vollibrespot -b 320  -c /tmp ${shared} \
+                  --disable-audio-cache \
+                  --name '${devicename}-MR' --initial-volume ${initvol}\
+                  --backend pipe --device /tmp/snapfifo --verbose

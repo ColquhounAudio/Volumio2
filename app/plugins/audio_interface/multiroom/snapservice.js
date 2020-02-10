@@ -131,11 +131,28 @@ function client(){
 
 
 function startServer(parameters) {
-  exec("/usr/sbin/snapserver " + parameters, function (error, stdout, stderr) {
+  exec('/usr/bin/sudo /bin/systemctl start snapserver.service', function (error, stdout, stderr) {
     if (error) {
       console.log('Cannot Start Snapclient' + error);
     }
     else {
+
+    exec('/usr/bin/sudo /bin/systemctl stop volspotconnect2.service',function (error, stdout, stderr) {
+	    if(error) {
+		    console.log('Failed to stop volspotconnect2');
+	    }else{
+	    exec('/usr/bin/sudo /bin/systemctl start volspotconnect2mr.service',function (error, stdout, stderr) {
+		    if(error) {
+			    console.log('Failed to start volspotconnect2mr');
+		    }else{
+
+		    }
+    	    });
+
+
+	    }
+    });
+
     return console.log('started');
     }
 
@@ -144,12 +161,29 @@ function startServer(parameters) {
 
 
 function stopServer() {
-  exec(" /usr/bin/killall /usr/sbin/snapserver", function (error, stdout, stderr) {
+  exec('/usr/bin/sudo /bin/systemctl stop snapserver.service', function (error, stdout, stderr) {
     if (error) {
-      console.log('Cannot Kill Snapserver' + error);
+      console.log('Cannot Start Snapclient' + error);
     }
     else {
-    return console.log('Snapserver Killed');
+
+    exec('/usr/bin/sudo /bin/systemctl stop volspotconnect2mr.service',function (error, stdout, stderr) {
+	    if(error) {
+		    console.log('Failed to stop volspotconnect2mr');
+	    }else{
+	    exec('/usr/bin/sudo /bin/systemctl start volspotconnect2.service',function (error, stdout, stderr) {
+		    if(error) {
+			    console.log('Failed to start volspotconnect2');
+		    }else{
+
+		    }
+    	    });
+
+
+	    }
+    });
+
+    return console.log('started');
     }
 
   });

@@ -32,6 +32,7 @@ function Airplay2(context) {
     self.scheduled=false;
 
     self.playbackTimeRunning=false;
+    self.volumeCommandTimer=null;
 
     // 01/06/2018: Afrodita Kujumdzieva -  Set trackType to 'airplay' because it is needed by the volume manager to disable volume controls. 
     // 20180516- Emre Ozkan disableUiControls code added
@@ -77,31 +78,6 @@ Airplay2.prototype.onPlayerNameChanged=function(playerName) {
 
 Airplay2.prototype.startAirplayd=function(playerName) {
     var self = this;
-}
-
-Airplay2.prototype.volumeCallback=function(){
-    var self=this;
-
-    try {
-        fs.readFile(self.volumeFile, function(err,content)
-        {
-            self.currentVolume=parseInt(content);
-            if(self.scheduled==false)
-            {
-                setTimeout(function()
-                {
-                    self.commandRouter.volumiosetvolume(self.currentVolume);
-                    self.scheduled=false;
-                },150);
-
-                self.scheduled=true;
-            }
-        });
-    }
-    catch(error)
-    {
-        self.logger.info(err);
-    }
 }
 
 Airplay2.prototype.Progress=function(data){
@@ -165,6 +141,35 @@ Airplay2.prototype.MetaData=function(data){
     {
     }
 }
+
+Airplay2.prototype.Volume=function(data){
+    var self=this;
+
+    try {
+	    if(self.scheduled==true)
+	    {
+		clearTimeout(self.volumeCommandTimer);
+                self.scheduled=false;
+	    }
+            if(self.scheduled==false)
+            {
+                self.volumeCommandTimer=setTimeout(function()
+                {
+                  self.commandRouter.volumiosetvolume(parseInt(data.volume));
+                    self.scheduled=false;
+                },150);
+
+                self.scheduled=true;
+	    }
+    }
+    catch(error)
+    {
+        self.logger.info(err);
+    }
+}
+
+
+
 
 Airplay2.prototype.Playing=function(data){
     var self=this;
