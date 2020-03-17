@@ -604,12 +604,16 @@ ControllerSystem.prototype.enableAirplay1 = function (data) {
     var self = this;
 
     exec('/usr/bin/sudo /bin/systemctl stop airplay2.service',{uid:1000,gid:1000}, function (error, stdout, stderr) { });
+    exec('/usr/bin/sudo /bin/systemctl disable airplay2.service',{uid:1000,gid:1000}, function (error, stdout, stderr) { });
+    exec('/usr/bin/sudo /bin/systemctl enable airplay.service',{uid:1000,gid:1000}, function (error, stdout, stderr) { });
     exec('/usr/bin/sudo /bin/systemctl start airplay.service',{uid:1000,gid:1000}, function (error, stdout, stderr) { });
 }
 ControllerSystem.prototype.enableAirplay2 = function (data) {
     var self = this;
 
     exec('/usr/bin/sudo /bin/systemctl stop airplay.service',{uid:1000,gid:1000}, function (error, stdout, stderr) { });
+    exec('/usr/bin/sudo /bin/systemctl disable airplay.service',{uid:1000,gid:1000}, function (error, stdout, stderr) { });
+    exec('/usr/bin/sudo /bin/systemctl enable airplay2.service',{uid:1000,gid:1000}, function (error, stdout, stderr) { });
     exec('/usr/bin/sudo /bin/systemctl start airplay2.service',{uid:1000,gid:1000}, function (error, stdout, stderr) { });
 }
 ControllerSystem.prototype.enableSupport = function (data) {

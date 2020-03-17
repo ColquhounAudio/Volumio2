@@ -119,10 +119,32 @@ GPIOButtons.prototype.onVolumioStart = function () {
     	var clilevels = execSync("/usr/local/bin/karaokectl read");
 	karaokeLevels = JSON.parse(clilevels);
 	legacyKaraoke=false;
+	var levels = this.config.get("levels");
+        self.logger.info("*****************************************************************************************");
+        self.logger.info(JSON.stringify(levels));
+        self.logger.info("Loading levels");
+	if(typeof levels !== "undefined"){
+		if(typeof levels.musicLevel !== "undefined"){
+			self.logger.info("Loading Music level");
+			this.MusicLevelChange(levels.musicLevel);
+		}
+		
+		if(typeof levels.micLevel !== "undefined"){
+			self.logger.info("Loading Mic level");
+			this.MicLevelChange(levels.micLevel);
+		}
+		if(typeof levels.echoLevel !== "undefined"){
+			self.logger.info("Loading Echo level");
+			this.EchoLevelChange(levels.echoLevel);
+		}
+	}
+        self.logger.info("*****************************************************************************************");
+        self.logger.info("Registering Timers");
 	karaokeReadTimer=setTimeout(function() { this.pullKaraokeLevels() }.bind(this),300);
 	karaokeReadInterval=setInterval(function() { this.pullKaraokeLevels() }.bind(this),5000);
     }catch(ex){
 	legacyKaraoke=true;
+    	self.logger.info(ex.message);
     	self.logger.info("Unable to read levels. Using legacy Karaoke mode");
 	    MusicPlus.writeSync(1);
 	    setTimeout(function(){
@@ -357,6 +379,11 @@ GPIOButtons.prototype.saveConfig = function (data) {
     self.commandRouter.pushToastMessage('success', "GPIO-Buttons", "Configuration saved");
 };
 
+GPIOButtons.prototype.saveLevels = function() {
+    var self = this;
+    self.config.set('levels',karaokeLevels);
+    self.config.save();
+}
 
 GPIOButtons.prototype.createTriggers = function () {
     var self = this;
@@ -796,12 +823,22 @@ GPIOButtons.prototype.pullKaraokeLevels = function (){
 	var self=this;
 	    try {
 		var clilevels = execSync("/usr/local/bin/karaokectl read");
-		karaokeLevels = JSON.parse(clilevels);
-		var oMessaggio = {	
-			msg: "pushKaraokeLevels",
-			value: karaokeLevels
-		};
-            	self.commandRouter.executeOnPlugin('user_interface', 'websocket', 'broadcastMessage', oMessaggio);
+		var newkaraokeLevels = JSON.parse(clilevels);
+		if(
+			newkaraokeLevels.musicLevel !== karaokeLevels.musicLevel ||
+			newkaraokeLevels.micLevel !== karaokeLevels.micLevel ||
+			newkaraokeLevels.echoLevel !== karaokeLevels.echoLevel ||
+			newkaraokeLevels.KaraokeStatus !== karaokeLevels.KaraokeStatus)
+		{
+
+			karaokeLevels=newkaraokeLevels;
+			self.saveLevels();
+			var oMessaggio = {	
+				msg: "pushKaraokeLevels",
+				value: karaokeLevels
+			};
+			self.commandRouter.executeOnPlugin('user_interface', 'websocket', 'broadcastMessage', oMessaggio);
+		}
 	    }catch(ex){
     		console.log("Error in pulling levels :"+ex);
 	    }
