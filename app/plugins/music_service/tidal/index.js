@@ -903,7 +903,7 @@ ControllerTidal.prototype.browseGenresMenu = function () {
                         type: 'radio-category',
                         title: item.name,
                         albumart: albumart,
-                        uri: 'tidal://genres/'+item.name
+                        uri: 'tidal://genres/'+item.path
                     });
                 }
 
